@@ -1,4 +1,4 @@
-import { api } from './api'
+import api from '../api/api'
 import type { Post } from '@/types'
 
 export interface PostListResponse {
@@ -34,4 +34,4 @@ export const postService = {
   },
 }
 
-export default postService 
+export default postService

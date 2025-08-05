@@ -86,10 +86,10 @@ const UserManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <Button 
                         variant="destructive" 
-                        size="sm"
                         disabled={users.length <= 1}
                         title={users.length <= 1 ? "Cannot delete the only admin user" : "Delete user"}
                         onClick={() => alert('Delete functionality would go here')}
+                        className="text-sm px-3 py-1"
                       >
                         Delete
                       </Button>

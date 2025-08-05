@@ -2,7 +2,7 @@ import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'destructive';
   asChild?: boolean;
 }
 
@@ -11,6 +11,7 @@ const Button: React.FC<ButtonProps> = ({ children, variant = 'primary', asChild 
   const variants = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-300',
     secondary: 'bg-gray-300 text-gray-700 hover:bg-gray-400 focus:ring-gray-300',
+    destructive: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-300',
   };
   
   const className = `${baseStyle} ${variants[variant]} ${props.className || ''}`;

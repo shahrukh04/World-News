@@ -61,9 +61,11 @@ const AdSenseAd: React.FC<AdSenseAdProps> = ({
                 // Final dimension check before push
                 const finalRect = adRef.current.getBoundingClientRect()
                 if (finalRect.width >= 300 && finalRect.height >= 150) {
+                  console.log('AdSense: Attempting to load ad for slot:', adSlot);
                   // @ts-ignore
-                  (window.adsbygoogle = window.adsbygoogle || []).push({})
-                  isAdLoaded.current = true
+                  (window.adsbygoogle = window.adsbygoogle || []).push({});
+                  isAdLoaded.current = true;
+                  console.log('AdSense: Ad push completed for slot:', adSlot);
                 }
               }
             }, 200)
@@ -121,8 +123,12 @@ const AdSenseAd: React.FC<AdSenseAdProps> = ({
       display: 'block',
       width: '100%',
       boxSizing: 'border-box',
-      overflow: 'hidden',
-      backgroundColor: 'transparent',
+      overflow: 'visible', // Changed from 'hidden' to 'visible'
+      backgroundColor: '#f8f9fa', // Light background to make ads visible
+      border: '1px solid #e9ecef', // Border to show ad boundaries
+      borderRadius: '4px',
+      padding: '8px',
+      margin: '16px 0',
       ...style
     }
     
@@ -168,9 +174,14 @@ const AdSenseAd: React.FC<AdSenseAdProps> = ({
       minWidth: '300px',
       width: '100%',
       display: 'block',
-      overflow: 'hidden',
+      overflow: 'visible', // Changed from 'hidden' to 'visible'
       position: 'relative',
       boxSizing: 'border-box',
+      backgroundColor: '#ffffff', // White background for container
+      border: '2px dashed #007bff', // Blue dashed border to identify ad containers
+      borderRadius: '8px',
+      padding: '12px',
+      margin: '20px 0',
       ...style
     }
     
@@ -190,6 +201,22 @@ const AdSenseAd: React.FC<AdSenseAdProps> = ({
 
   return (
     <div className={getContainerClass()} style={getContainerStyle()}>
+      {/* Debug info - remove in production */}
+      <div style={{
+        position: 'absolute',
+        top: '4px',
+        left: '4px',
+        fontSize: '10px',
+        color: '#007bff',
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        padding: '2px 6px',
+        borderRadius: '3px',
+        zIndex: 1000,
+        fontFamily: 'monospace'
+      }}>
+        Ad Slot: {adSlot} | Status: {isAdLoaded.current ? 'Loaded' : 'Loading'}
+      </div>
+      
       <ins
         ref={adRef}
         className="adsbygoogle"

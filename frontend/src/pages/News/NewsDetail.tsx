@@ -141,15 +141,7 @@ const NewsDetail: React.FC = () => {
                   month: 'long',
                   day: 'numeric'
                 })}</span>
-                {news.updatedAt !== news.createdAt && (
-                  <span className="sm:ml-4">
-                    Updated on {new Date(news.updatedAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </span>
-                )}
+
               </div>
 
               {/* Featured Image */}

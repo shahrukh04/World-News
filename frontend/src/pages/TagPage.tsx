@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/Badge'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { formatDate, generateExcerpt, readingTime } from '@/lib/utils'
-import type { Post, Tag } from '@/types'
+import type { Post, Tag, Category } from '@/types'
 
 const TagPage = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -27,11 +27,36 @@ const TagPage = () => {
           description: 'Articles about React.js, React hooks, and modern React development practices.',
           color: '#61DAFB',
           analytics: {
-            postCount: 15,
+            totalPosts: 15,
             totalViews: 8500,
+            postCount: 15,
             clickCount: 1200
           },
           relatedTags: ['typescript', 'javascript', 'frontend'],
+          isActive: true,
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z'
+        }
+
+        const mockCategory: Category = {
+          _id: '1',
+          name: 'React',
+          slug: slug || 'react',
+          description: 'Articles about React.js, React hooks, and modern React development practices.',
+          displaySettings: {
+            color: '#61DAFB',
+            icon: 'react'
+          },
+          seo: {
+            metaTitle: 'React Articles',
+            metaDescription: 'Learn React development',
+            focusKeyword: 'react'
+          },
+          analytics: {
+            totalPosts: 15,
+            totalViews: 8500,
+            averageReadTime: 5
+          },
           isActive: true,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z'
@@ -50,30 +75,36 @@ const TagPage = () => {
               firstName: 'John',
               lastName: 'Doe',
               email: 'john@example.com',
-              role: 'admin',
-              isActive: true,
-              emailVerified: true,
-              newsletterSubscribed: true,
-              preferences: { theme: 'light', emailNotifications: true, marketingEmails: true },
-              analytics: { totalPosts: 10, totalViews: 5000, totalShares: 250, avgEngagement: 15.5 },
+              role: 'admin' as const,
               createdAt: '2024-01-01T00:00:00Z',
               updatedAt: '2024-01-01T00:00:00Z',
             },
-            categories: [],
+            category: mockCategory,
             tags: [mockTag],
             status: 'published',
             publishedAt: '2024-01-15T10:00:00Z',
             featuredImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', keywords: [], canonicalUrl: '', focusKeyword: '', seoScore: 0 },
-            monetization: { affiliateLinks: [], adSenseEnabled: true, adPlacements: [], sponsoredContent: false },
-            analytics: { views: 0, uniqueViews: 0, shares: { facebook: 0, twitter: 0, linkedin: 0, pinterest: 0, total: 0 }, comments: 0, likes: 0, timeOnPage: 0, bounceRate: 0, engagementScore: 0 },
-            performance: { loadTime: 0, coreWebVitals: { lcp: 0, fid: 0, cls: 0 } },
-            social: { autoShare: false, platforms: [], customMessages: {} },
-            contentAnalysis: { wordCount: 0, readingTime: 0, readabilityScore: 0, keywordDensity: {}, internalLinks: 0, externalLinks: 0, images: 0 },
-            isPasswordProtected: false,
-            allowComments: true,
-            isPinned: false,
-            createdAt: '2024-01-15T10:00:00Z',
+            seo: {
+              metaTitle: 'React Hooks Guide',
+              metaDescription: 'Learn React Hooks with practical examples',
+              focusKeyword: 'react hooks',
+              canonicalUrl: '/post/react-hooks-guide'
+            },
+            analytics: {
+              views: 1250,
+              likes: 45,
+              shares: 12,
+              comments: 8,
+              readTime: 5
+            },
+            settings: {
+               allowComments: true,
+               isPinned: false,
+               isFeatured: false,
+               adSenseEnabled: true,
+               affiliateEnabled: false
+             },
+             createdAt: '2024-01-15T10:00:00Z',
             updatedAt: '2024-01-15T10:00:00Z',
           },
           {
@@ -88,30 +119,36 @@ const TagPage = () => {
               firstName: 'John',
               lastName: 'Doe',
               email: 'john@example.com',
-              role: 'admin',
-              isActive: true,
-              emailVerified: true,
-              newsletterSubscribed: true,
-              preferences: { theme: 'light', emailNotifications: true, marketingEmails: true },
-              analytics: { totalPosts: 10, totalViews: 5000, totalShares: 250, avgEngagement: 15.5 },
+              role: 'admin' as const,
               createdAt: '2024-01-01T00:00:00Z',
               updatedAt: '2024-01-01T00:00:00Z',
             },
-            categories: [],
+            category: mockCategory,
             tags: [mockTag],
             status: 'published',
             publishedAt: '2024-01-20T14:30:00Z',
             featuredImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', keywords: [], canonicalUrl: '', focusKeyword: '', seoScore: 0 },
-            monetization: { affiliateLinks: [], adSenseEnabled: true, adPlacements: [], sponsoredContent: false },
-            analytics: { views: 0, uniqueViews: 0, shares: { facebook: 0, twitter: 0, linkedin: 0, pinterest: 0, total: 0 }, comments: 0, likes: 0, timeOnPage: 0, bounceRate: 0, engagementScore: 0 },
-            performance: { loadTime: 0, coreWebVitals: { lcp: 0, fid: 0, cls: 0 } },
-            social: { autoShare: false, platforms: [], customMessages: {} },
-            contentAnalysis: { wordCount: 0, readingTime: 0, readabilityScore: 0, keywordDensity: {}, internalLinks: 0, externalLinks: 0, images: 0 },
-            isPasswordProtected: false,
-            allowComments: true,
-            isPinned: false,
-            createdAt: '2024-01-20T14:30:00Z',
+            seo: {
+              metaTitle: 'Advanced React Patterns',
+              metaDescription: 'Master advanced React patterns and techniques',
+              focusKeyword: 'react patterns',
+              canonicalUrl: '/post/advanced-react-patterns'
+            },
+            analytics: {
+              views: 890,
+              likes: 32,
+              shares: 8,
+              comments: 5,
+              readTime: 7
+            },
+            settings: {
+               allowComments: true,
+               isPinned: false,
+               isFeatured: true,
+               adSenseEnabled: true,
+               affiliateEnabled: false
+             },
+             createdAt: '2024-01-20T14:30:00Z',
             updatedAt: '2024-01-20T14:30:00Z',
           }
         ]

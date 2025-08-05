@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Input } from '@/components/ui/Input'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { formatDate, generateExcerpt, readingTime } from '@/lib/utils'
-import type { Post, SearchParams, SearchResults } from '@/types'
+import type { Post, SearchResults } from '@/types'
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -41,29 +41,56 @@ const SearchPage = () => {
               firstName: 'John',
               lastName: 'Doe',
               email: 'john@example.com',
-              role: 'admin',
-              isActive: true,
-              emailVerified: true,
-              newsletterSubscribed: true,
-              preferences: { theme: 'light', emailNotifications: true, marketingEmails: true },
-              analytics: { totalPosts: 10, totalViews: 5000, totalShares: 250, avgEngagement: 15.5 },
+              role: 'admin' as const,
               createdAt: '2024-01-01T00:00:00Z',
               updatedAt: '2024-01-01T00:00:00Z',
             },
-            categories: [],
+            category: {
+              _id: '1',
+              name: 'Web Development',
+              slug: 'web-development',
+              description: 'Web development articles and tutorials',
+              displaySettings: {
+                color: '#2196F3',
+                icon: 'code'
+              },
+              seo: {
+                metaTitle: 'Web Development Articles',
+                metaDescription: 'Learn web development',
+                focusKeyword: 'web development'
+              },
+              analytics: {
+                totalPosts: 30,
+                totalViews: 18000,
+                averageReadTime: 5
+              },
+              isActive: true,
+              createdAt: '2024-01-01T00:00:00Z',
+              updatedAt: '2024-01-01T00:00:00Z',
+            },
             tags: [],
             status: 'published',
             publishedAt: '2024-01-15T10:00:00Z',
             featuredImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', keywords: [], canonicalUrl: '', focusKeyword: '', seoScore: 0 },
-            monetization: { affiliateLinks: [], adSenseEnabled: true, adPlacements: [], sponsoredContent: false },
-            analytics: { views: 0, uniqueViews: 0, shares: { facebook: 0, twitter: 0, linkedin: 0, pinterest: 0, total: 0 }, comments: 0, likes: 0, timeOnPage: 0, bounceRate: 0, engagementScore: 0 },
-            performance: { loadTime: 0, coreWebVitals: { lcp: 0, fid: 0, cls: 0 } },
-            social: { autoShare: false, platforms: [], customMessages: {} },
-            contentAnalysis: { wordCount: 0, readingTime: 0, readabilityScore: 0, keywordDensity: {}, internalLinks: 0, externalLinks: 0, images: 0 },
-            isPasswordProtected: false,
-            allowComments: true,
-            isPinned: false,
+            seo: {
+              metaTitle: 'Sample Article',
+              metaDescription: 'This is a sample article',
+              focusKeyword: 'sample'
+            },
+            analytics: {
+              views: 150,
+              likes: 12,
+              shares: 5,
+              comments: 3,
+              readTime: 4
+            },
+            settings: {
+              allowComments: true,
+              isPinned: false,
+              isFeatured: false,
+              adSenseEnabled: true,
+              affiliateEnabled: false
+            },
             createdAt: '2024-01-15T10:00:00Z',
             updatedAt: '2024-01-15T10:00:00Z',
           },
@@ -79,37 +106,75 @@ const SearchPage = () => {
               firstName: 'John',
               lastName: 'Doe',
               email: 'john@example.com',
-              role: 'admin',
-              isActive: true,
-              emailVerified: true,
-              newsletterSubscribed: true,
-              preferences: { theme: 'light', emailNotifications: true, marketingEmails: true },
-              analytics: { totalPosts: 10, totalViews: 5000, totalShares: 250, avgEngagement: 15.5 },
+              role: 'admin' as const,
               createdAt: '2024-01-01T00:00:00Z',
               updatedAt: '2024-01-01T00:00:00Z',
             },
-            categories: [],
+            category: {
+              _id: '1',
+              name: 'SEO',
+              slug: 'seo',
+              description: 'Search Engine Optimization articles',
+              displaySettings: {
+                color: '#4CAF50',
+                icon: 'seo'
+              },
+              seo: {
+                metaTitle: 'SEO Articles',
+                metaDescription: 'Learn SEO techniques',
+                focusKeyword: 'seo'
+              },
+              analytics: {
+                totalPosts: 20,
+                totalViews: 12000,
+                averageReadTime: 6
+              },
+              isActive: true,
+              createdAt: '2024-01-01T00:00:00Z',
+              updatedAt: '2024-01-01T00:00:00Z',
+            },
             tags: [],
             status: 'published',
             publishedAt: '2024-01-20T14:30:00Z',
             featuredImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', keywords: [], canonicalUrl: '', focusKeyword: '', seoScore: 0 },
-            monetization: { affiliateLinks: [], adSenseEnabled: true, adPlacements: [], sponsoredContent: false },
-            analytics: { views: 0, uniqueViews: 0, shares: { facebook: 0, twitter: 0, linkedin: 0, pinterest: 0, total: 0 }, comments: 0, likes: 0, timeOnPage: 0, bounceRate: 0, engagementScore: 0 },
-            performance: { loadTime: 0, coreWebVitals: { lcp: 0, fid: 0, cls: 0 } },
-            social: { autoShare: false, platforms: [], customMessages: {} },
-            contentAnalysis: { wordCount: 0, readingTime: 0, readabilityScore: 0, keywordDensity: {}, internalLinks: 0, externalLinks: 0, images: 0 },
-            isPasswordProtected: false,
-            allowComments: true,
-            isPinned: false,
+            seo: {
+              metaTitle: 'Advanced SEO Techniques',
+              metaDescription: 'Learn advanced SEO strategies',
+              focusKeyword: 'seo techniques'
+            },
+            analytics: {
+              views: 320,
+              likes: 28,
+              shares: 15,
+              comments: 12,
+              readTime: 6
+            },
+            settings: {
+              allowComments: true,
+              isPinned: false,
+              isFeatured: true,
+              adSenseEnabled: true,
+              affiliateEnabled: false
+            },
             createdAt: '2024-01-20T14:30:00Z',
             updatedAt: '2024-01-20T14:30:00Z',
           }
         ],
-        categories: [],
-        tags: [],
-        users: [],
-        total: 2
+        totalResults: 2,
+        total: 2,
+        pagination: {
+          currentPage: 1,
+          totalPages: 1,
+          totalItems: 2,
+          itemsPerPage: 10,
+          hasNextPage: false,
+          hasPrevPage: false
+        },
+        filters: {
+          query: query,
+          sortBy: 'relevance',
+          sortOrder: 'desc'
+        }
       }
 
       // Simulate API delay

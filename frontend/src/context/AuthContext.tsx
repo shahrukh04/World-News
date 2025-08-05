@@ -1,11 +1,12 @@
 import React, { createContext, useContext, ReactNode, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
+import { User } from '../types';
 
 interface AuthContextType {
-  user: { _id: string; username: string } | null;
+  user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (userData: { _id: string; username: string; token: string }) => void;
+  login: (userData: { user: User; token: string }) => void;
   logout: () => void;
 }
 

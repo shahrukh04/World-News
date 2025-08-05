@@ -25,24 +25,21 @@ const CategoryPage = () => {
           name: 'Web Development',
           slug: slug || 'web-development',
           description: 'Articles about modern web development, frameworks, and best practices.',
-          color: '#3B82F6',
-          icon: '💻',
           parentCategory: undefined,
           subcategories: ['react', 'vue', 'angular'],
           seo: {
             metaTitle: 'Web Development Articles - Blog Platform',
             metaDescription: 'Explore our collection of web development articles covering React, Vue, Angular, and modern development practices.',
-            keywords: ['web development', 'react', 'vue', 'angular', 'javascript', 'typescript'],
-            canonicalUrl: `/category/${slug}`
+            focusKeyword: 'web development'
           },
           analytics: {
             totalPosts: 25,
             totalViews: 15000,
-            avgEngagement: 12.5
+            averageReadTime: 5
           },
           displaySettings: {
-            showInMenu: true,
-            menuOrder: 1,
+            color: '#3B82F6',
+            icon: '💻',
             featuredImage: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop'
           },
           isActive: true,
@@ -64,28 +61,17 @@ const CategoryPage = () => {
               lastName: 'Doe',
               email: 'john@example.com',
               role: 'admin',
-              isActive: true,
-              emailVerified: true,
-              newsletterSubscribed: true,
-              preferences: { theme: 'light', emailNotifications: true, marketingEmails: true },
-              analytics: { totalPosts: 10, totalViews: 5000, totalShares: 250, avgEngagement: 15.5 },
               createdAt: '2024-01-01T00:00:00Z',
               updatedAt: '2024-01-01T00:00:00Z',
             },
-            categories: [mockCategory],
+            category: mockCategory,
             tags: [],
             status: 'published',
             publishedAt: '2024-01-15T10:00:00Z',
             featuredImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', keywords: [], canonicalUrl: '', focusKeyword: '', seoScore: 0 },
-            monetization: { affiliateLinks: [], adSenseEnabled: true, adPlacements: [], sponsoredContent: false },
-            analytics: { views: 0, uniqueViews: 0, shares: { facebook: 0, twitter: 0, linkedin: 0, pinterest: 0, total: 0 }, comments: 0, likes: 0, timeOnPage: 0, bounceRate: 0, engagementScore: 0 },
-            performance: { loadTime: 0, coreWebVitals: { lcp: 0, fid: 0, cls: 0 } },
-            social: { autoShare: false, platforms: [], customMessages: {} },
-            contentAnalysis: { wordCount: 0, readingTime: 0, readabilityScore: 0, keywordDensity: {}, internalLinks: 0, externalLinks: 0, images: 0 },
-            isPasswordProtected: false,
-            allowComments: true,
-            isPinned: false,
+            seo: { metaTitle: '', metaDescription: '', focusKeyword: '', canonicalUrl: '' },
+            analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 5 },
+            settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
             createdAt: '2024-01-15T10:00:00Z',
             updatedAt: '2024-01-15T10:00:00Z',
           },
@@ -102,28 +88,17 @@ const CategoryPage = () => {
               lastName: 'Doe',
               email: 'john@example.com',
               role: 'admin',
-              isActive: true,
-              emailVerified: true,
-              newsletterSubscribed: true,
-              preferences: { theme: 'light', emailNotifications: true, marketingEmails: true },
-              analytics: { totalPosts: 10, totalViews: 5000, totalShares: 250, avgEngagement: 15.5 },
               createdAt: '2024-01-01T00:00:00Z',
               updatedAt: '2024-01-01T00:00:00Z',
             },
-            categories: [mockCategory],
+            category: mockCategory,
             tags: [],
             status: 'published',
             publishedAt: '2024-01-20T14:30:00Z',
             featuredImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', keywords: [], canonicalUrl: '', focusKeyword: '', seoScore: 0 },
-            monetization: { affiliateLinks: [], adSenseEnabled: true, adPlacements: [], sponsoredContent: false },
-            analytics: { views: 0, uniqueViews: 0, shares: { facebook: 0, twitter: 0, linkedin: 0, pinterest: 0, total: 0 }, comments: 0, likes: 0, timeOnPage: 0, bounceRate: 0, engagementScore: 0 },
-            performance: { loadTime: 0, coreWebVitals: { lcp: 0, fid: 0, cls: 0 } },
-            social: { autoShare: false, platforms: [], customMessages: {} },
-            contentAnalysis: { wordCount: 0, readingTime: 0, readabilityScore: 0, keywordDensity: {}, internalLinks: 0, externalLinks: 0, images: 0 },
-            isPasswordProtected: false,
-            allowComments: true,
-            isPinned: false,
+            seo: { metaTitle: '', metaDescription: '', focusKeyword: '', canonicalUrl: '' },
+            analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 7 },
+            settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
             createdAt: '2024-01-20T14:30:00Z',
             updatedAt: '2024-01-20T14:30:00Z',
           }
@@ -173,15 +148,14 @@ const CategoryPage = () => {
       <Helmet>
         <title>{category.seo.metaTitle || `${category.name} Articles - Blog Platform`}</title>
         <meta name="description" content={category.seo.metaDescription || category.description} />
-        <meta name="keywords" content={category.seo.keywords.join(', ')} />
-        <link rel="canonical" href={category.seo.canonicalUrl} />
+        <meta name="keywords" content={category.seo.focusKeyword || ''} />
         
         {/* Open Graph */}
         <meta property="og:title" content={category.name} />
         <meta property="og:description" content={category.description} />
         <meta property="og:image" content={category.displaySettings.featuredImage} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={category.seo.canonicalUrl} />
+        <meta property="og:url" content={`/category/${category.slug}`} />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
@@ -207,7 +181,9 @@ const CategoryPage = () => {
               </nav>
 
               <div className="flex items-center justify-center mb-6">
-                <div className="text-4xl mr-4">{category.icon}</div>
+                {category.displaySettings.icon && (
+                  <div className="text-4xl mr-4">{category.displaySettings.icon}</div>
+                )}
                 <h1 className="text-4xl md:text-5xl font-bold">{category.name}</h1>
               </div>
               
@@ -226,8 +202,8 @@ const CategoryPage = () => {
                   <div className="text-sm text-muted-foreground">Views</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">{category.analytics.avgEngagement}%</div>
-                  <div className="text-sm text-muted-foreground">Engagement</div>
+                  <div className="text-2xl font-bold text-primary">{category.analytics.averageReadTime} min</div>
+                  <div className="text-sm text-muted-foreground">Avg Read Time</div>
                 </div>
               </div>
             </div>
@@ -235,7 +211,7 @@ const CategoryPage = () => {
         </section>
 
         {/* Subcategories */}
-        {category.subcategories.length > 0 && (
+        {category.subcategories && category.subcategories.length > 0 && (
           <section className="py-8 border-b">
             <div className="container mx-auto px-4">
               <div className="flex flex-wrap justify-center gap-4">

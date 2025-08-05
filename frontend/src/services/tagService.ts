@@ -1,4 +1,4 @@
-import { api } from './api'
+import api from '../api/api'
 import type { Tag } from '@/types'
 
 export interface TagListResponse {

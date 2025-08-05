@@ -117,24 +117,32 @@ const PostPage = () => {
             lastName: 'Doe',
             email: 'john@example.com',
             role: 'admin',
-            isActive: true,
-            emailVerified: true,
-            newsletterSubscribed: true,
-            preferences: {
-              theme: 'light',
-              emailNotifications: true,
-              marketingEmails: true,
-            },
-            analytics: {
-              totalPosts: 10,
-              totalViews: 5000,
-              totalShares: 250,
-              avgEngagement: 15.5,
-            },
+
             createdAt: '2024-01-01T00:00:00Z',
             updatedAt: '2024-01-01T00:00:00Z',
           },
-          categories: [],
+          category: {
+            _id: '1',
+            name: 'Web Development',
+            slug: 'web-development',
+            description: 'Articles about modern web development',
+            displaySettings: {
+              color: '#3B82F6',
+              icon: '💻'
+            },
+            seo: {
+              metaTitle: 'Web Development Articles',
+              metaDescription: 'Latest web development tutorials and guides'
+            },
+            analytics: {
+              totalPosts: 25,
+              totalViews: 15000,
+              averageReadTime: 8
+            },
+            isActive: true,
+            createdAt: '2024-01-01T00:00:00Z',
+            updatedAt: '2024-01-01T00:00:00Z'
+          },
           tags: [],
           status: 'published',
           publishedAt: '2024-01-15T10:00:00Z',
@@ -142,61 +150,23 @@ const PostPage = () => {
           seo: {
             metaTitle: 'Getting Started with React and TypeScript: A Comprehensive Guide',
             metaDescription: 'Learn how to build modern web applications with React and TypeScript. This comprehensive guide covers everything you need to know from setup to deployment.',
-            keywords: ['react', 'typescript', 'web development', 'frontend', 'javascript'],
             canonicalUrl: `/post/${slug}`,
             focusKeyword: 'React TypeScript',
-            seoScore: 85,
-          },
-          monetization: {
-            affiliateLinks: [],
-            adSenseEnabled: true,
-            adPlacements: ['content-top', 'content-middle', 'sidebar'],
-            sponsoredContent: false,
           },
           analytics: {
             views: 1250,
-            uniqueViews: 980,
-            shares: {
-              facebook: 45,
-              twitter: 32,
-              linkedin: 28,
-              pinterest: 15,
-              total: 120,
-            },
-            comments: 23,
             likes: 156,
-            timeOnPage: 320,
-            bounceRate: 0.35,
-            engagementScore: 78,
+            shares: 120,
+            comments: 23,
+            readTime: 6,
           },
-          performance: {
-            loadTime: 1.2,
-            coreWebVitals: {
-              lcp: 1.8,
-              fid: 0.12,
-              cls: 0.05,
-            },
+          settings: {
+            allowComments: true,
+            isPinned: false,
+            isFeatured: false,
+            adSenseEnabled: true,
+            affiliateEnabled: false,
           },
-          social: {
-            autoShare: true,
-            platforms: ['twitter', 'linkedin'],
-            customMessages: {
-              twitter: 'Check out this comprehensive guide on React and TypeScript!',
-              linkedin: 'Learn how to build modern web applications with React and TypeScript',
-            },
-          },
-          contentAnalysis: {
-            wordCount: 1200,
-            readingTime: 6,
-            readabilityScore: 75,
-            keywordDensity: { 'react': 2.1, 'typescript': 1.8 },
-            internalLinks: 5,
-            externalLinks: 3,
-            images: 2,
-          },
-          isPasswordProtected: false,
-          allowComments: true,
-          isPinned: false,
           createdAt: '2024-01-15T10:00:00Z',
           updatedAt: '2024-01-15T10:00:00Z',
         }
@@ -209,20 +179,35 @@ const PostPage = () => {
             excerpt: 'Explore advanced TypeScript patterns that will make your React code more robust and maintainable.',
             content: 'Lorem ipsum dolor sit amet...',
             author: mockPost.author,
-            categories: [],
+            category: {
+              _id: '2',
+              name: 'TypeScript',
+              slug: 'typescript',
+              description: 'TypeScript tutorials and best practices',
+              displaySettings: {
+                color: '#007ACC',
+                icon: '📘'
+              },
+              seo: {
+                metaTitle: 'TypeScript Articles',
+                metaDescription: 'Learn TypeScript with our comprehensive guides'
+              },
+              analytics: {
+                totalPosts: 18,
+                totalViews: 12000,
+                averageReadTime: 7
+              },
+              isActive: true,
+              createdAt: '2024-01-01T00:00:00Z',
+              updatedAt: '2024-01-01T00:00:00Z'
+            },
             tags: [],
             status: 'published',
             publishedAt: '2024-01-20T14:30:00Z',
             featuredImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', keywords: [], canonicalUrl: '', focusKeyword: '', seoScore: 0 },
-            monetization: { affiliateLinks: [], adSenseEnabled: true, adPlacements: [], sponsoredContent: false },
-            analytics: { views: 0, uniqueViews: 0, shares: { facebook: 0, twitter: 0, linkedin: 0, pinterest: 0, total: 0 }, comments: 0, likes: 0, timeOnPage: 0, bounceRate: 0, engagementScore: 0 },
-            performance: { loadTime: 0, coreWebVitals: { lcp: 0, fid: 0, cls: 0 } },
-            social: { autoShare: false, platforms: [], customMessages: {} },
-            contentAnalysis: { wordCount: 0, readingTime: 0, readabilityScore: 0, keywordDensity: {}, internalLinks: 0, externalLinks: 0, images: 0 },
-            isPasswordProtected: false,
-            allowComments: true,
-            isPinned: false,
+            seo: { metaTitle: '', metaDescription: '', canonicalUrl: '', focusKeyword: '' },
+            analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 0 },
+            settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
             createdAt: '2024-01-20T14:30:00Z',
             updatedAt: '2024-01-20T14:30:00Z',
           },
@@ -233,20 +218,35 @@ const PostPage = () => {
             excerpt: 'Learn how to structure and scale your React applications using TypeScript best practices.',
             content: 'Lorem ipsum dolor sit amet...',
             author: mockPost.author,
-            categories: [],
+            category: {
+              _id: '3',
+              name: 'React',
+              slug: 'react',
+              description: 'React development guides and tutorials',
+              displaySettings: {
+                color: '#61DAFB',
+                icon: '⚛️'
+              },
+              seo: {
+                metaTitle: 'React Articles',
+                metaDescription: 'Master React with our detailed tutorials'
+              },
+              analytics: {
+                totalPosts: 32,
+                totalViews: 20000,
+                averageReadTime: 9
+              },
+              isActive: true,
+              createdAt: '2024-01-01T00:00:00Z',
+              updatedAt: '2024-01-01T00:00:00Z'
+            },
             tags: [],
             status: 'published',
             publishedAt: '2024-01-25T09:15:00Z',
             featuredImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', keywords: [], canonicalUrl: '', focusKeyword: '', seoScore: 0 },
-            monetization: { affiliateLinks: [], adSenseEnabled: true, adPlacements: [], sponsoredContent: false },
-            analytics: { views: 0, uniqueViews: 0, shares: { facebook: 0, twitter: 0, linkedin: 0, pinterest: 0, total: 0 }, comments: 0, likes: 0, timeOnPage: 0, bounceRate: 0, engagementScore: 0 },
-            performance: { loadTime: 0, coreWebVitals: { lcp: 0, fid: 0, cls: 0 } },
-            social: { autoShare: false, platforms: [], customMessages: {} },
-            contentAnalysis: { wordCount: 0, readingTime: 0, readabilityScore: 0, keywordDensity: {}, internalLinks: 0, externalLinks: 0, images: 0 },
-            isPasswordProtected: false,
-            allowComments: true,
-            isPinned: false,
+            seo: { metaTitle: '', metaDescription: '', canonicalUrl: '', focusKeyword: '' },
+            analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 0 },
+            settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
             createdAt: '2024-01-25T09:15:00Z',
             updatedAt: '2024-01-25T09:15:00Z',
           },
@@ -311,7 +311,7 @@ const PostPage = () => {
       <Helmet>
         <title>{post.seo.metaTitle || post.title}</title>
         <meta name="description" content={post.seo.metaDescription || post.excerpt} />
-        <meta name="keywords" content={post.seo.keywords.join(', ')} />
+        {post.seo.focusKeyword && <meta name="keywords" content={post.seo.focusKeyword} />}
         <link rel="canonical" href={post.seo.canonicalUrl} />
         
         {/* Open Graph */}
@@ -359,7 +359,7 @@ const PostPage = () => {
 
       <div className="min-h-screen">
         {/* Google AdSense - Top of Content */}
-        {post.monetization.adSenseEnabled && (
+        {post.settings.adSenseEnabled && (
           <div className="container mx-auto px-4 py-4">
             <AdSenseAd adSlot={import.meta.env.VITE_ADSENSE_SLOT_HORIZONTAL} adFormat="auto" className="w-full" />
           </div>
@@ -398,7 +398,7 @@ const PostPage = () => {
                 <span>•</span>
                 <span>{formatDate(post.publishedAt!)}</span>
                 <span>•</span>
-                <span>{post.contentAnalysis.readingTime} min read</span>
+                <span>{post.analytics.readTime} min read</span>
                 <span>•</span>
                 <span>{post.analytics.views.toLocaleString()} views</span>
               </div>
@@ -452,7 +452,7 @@ const PostPage = () => {
             </div>
 
             {/* Google AdSense - Middle of Content */}
-            {post.monetization.adSenseEnabled && (
+            {post.settings.adSenseEnabled && (
               <div className="my-8">
                 <AdSenseAd 
               adSlot={import.meta.env.VITE_ADSENSE_SLOT_IN_ARTICLE} 
@@ -512,7 +512,7 @@ const PostPage = () => {
                       <CardHeader>
                         <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
                           <span>{formatDate(relatedPost.publishedAt!)}</span>
-                          <span>{relatedPost.contentAnalysis.readingTime} min read</span>
+                          <span>{relatedPost.analytics.readTime} min read</span>
                         </div>
                         <CardTitle className="line-clamp-2 hover:text-primary transition-colors">
                           <Link to={`/post/${relatedPost.slug}`}>
@@ -537,7 +537,7 @@ const PostPage = () => {
         )}
 
         {/* Google AdSense - Bottom of Content */}
-        {post.monetization.adSenseEnabled && (
+        {post.settings.adSenseEnabled && (
           <div className="container mx-auto px-4 py-4">
             <AdSenseAd 
               adSlot={import.meta.env.VITE_ADSENSE_SLOT_FLUID} 
