@@ -20,7 +20,20 @@ const Login = () => {
 
     try {
       const data = await loginUser({ username, password });
-      login(data);
+      // Transform the API response to match the auth store format
+      login({ 
+        user: { 
+          _id: data._id, 
+          username: data.username,
+          email: '', // Backend doesn't provide email yet
+          firstName: data.username, // Use username as firstName for now
+          lastName: '',
+          role: 'admin', // Default role for admin users
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }, 
+        token: data.token 
+      });
       navigate('/admin');
     } catch {
       setError('Invalid username or password');

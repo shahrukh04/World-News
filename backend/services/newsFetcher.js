@@ -21,7 +21,12 @@ class NewsFetcher {
       'World': { category: 'general', keywords: 'international OR global OR world' },
       'Health': { category: 'health', keywords: 'health OR medical OR healthcare OR medicine' },
       'Jobs': { keywords: 'jobs OR employment OR career OR hiring OR recruitment' },
-      'Other': { category: 'technology', keywords: 'technology OR science OR innovation' }
+      'Sports': { category: 'sports', keywords: 'sports OR football OR cricket OR basketball OR tennis OR olympics' },
+      'Technology': { category: 'technology', keywords: 'technology OR tech OR AI OR software OR innovation OR startup' },
+      'IPO': { keywords: 'IPO OR "initial public offering" OR stock market OR shares OR listing' },
+      'Business': { category: 'business', keywords: 'business OR economy OR finance OR market OR corporate' },
+      'Entertainment': { category: 'entertainment', keywords: 'entertainment OR movies OR music OR celebrity OR hollywood' },
+      'Other': { category: 'general', keywords: 'news OR current events OR trending' }
     };
     return categoryMap[category] || { keywords: category };
   }
@@ -145,12 +150,47 @@ class NewsFetcher {
         'Employment Rates Show Steady Improvement',
         'New Career Opportunities in Green Energy Sector'
       ],
-      'Other': [
+      'Sports': [
+        'Championship Finals Draw Record Viewership',
+        'Olympic Preparations Underway for Next Games',
+        'Major League Season Kicks Off with Excitement',
+        'Rising Star Athletes Break Multiple Records',
+        'Sports Technology Revolutionizes Training Methods'
+      ],
+      'Technology': [
         'Artificial Intelligence Breakthrough Announced',
-        'Sustainable Technology Solutions Gain Traction',
-        'Innovation in Transportation Sector',
+        'New Smartphone Technology Changes User Experience',
+        'Cybersecurity Advances Protect Digital Infrastructure',
+        'Quantum Computing Reaches New Milestone',
+        'Tech Giants Invest Billions in Green Technology'
+      ],
+      'IPO': [
+        'Major Tech Company Files for Public Offering',
+        'Healthcare Startup Announces IPO Plans',
+        'Green Energy Firm Goes Public with Strong Debut',
+        'Fintech Company Raises Billions in Market Debut',
+        'E-commerce Platform Launches Successful IPO'
+      ],
+      'Business': [
+        'Global Markets Show Strong Recovery Trends',
+        'Corporate Earnings Exceed Analyst Expectations',
+        'Merger and Acquisition Activity Increases',
+        'Supply Chain Innovations Boost Efficiency',
+        'Sustainable Business Practices Gain Momentum'
+      ],
+      'Entertainment': [
+        'Blockbuster Movie Breaks Box Office Records',
+        'Streaming Platform Announces Original Content',
+        'Music Industry Embraces New Distribution Models',
+        'Celebrity Charity Event Raises Millions',
+        'Gaming Industry Reaches New Revenue Heights'
+      ],
+      'Other': [
         'Scientific Discovery Opens New Possibilities',
-        'Digital Transformation Accelerates Across Industries'
+        'Digital Transformation Accelerates Across Industries',
+        'Innovation in Transportation Sector',
+        'Environmental Conservation Efforts Show Results',
+        'Educational Technology Improves Learning Outcomes'
       ]
     };
 

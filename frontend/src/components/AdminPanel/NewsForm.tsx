@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import Button from '../common/Button';
 import { createNews } from '../../services/api';
 
-const categories = ['India', 'World', 'Health', 'Jobs', 'Other'];
+const categories = ['India', 'World', 'Health', 'Jobs', 'Sports', 'Technology', 'IPO', 'Business', 'Entertainment', 'Other'];
 
 const NewsForm = () => {
   const [title, setTitle] = useState('');

@@ -5,8 +5,9 @@ import IndiaNews from './pages/News/IndiaNews';
 import WorldNews from './pages/News/WorldNews';
 import Health from './pages/News/HealthNews';
 import Jobs from './pages/News/JobsNews';
-import SportsNews from './pages/News/SportsNews';
-import TechnologyNews from './pages/News/TechnologyNews';
+import SportsNews from './pages/News/SportsNews'
+import TechnologyNews from './pages/News/TechnologyNews'
+import IPONews from './pages/News/IPONews';
 import NewsDetail from './pages/News/NewsDetail';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/jobs-news" element={<Jobs />} />
           <Route path="/sports-news" element={<SportsNews />} />
           <Route path="/technology-news" element={<TechnologyNews />} />
+          <Route path="/ipo-news" element={<IPONews />} />
           <Route path="/news/:id" element={<NewsDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

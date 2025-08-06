@@ -76,40 +76,52 @@ const NewsScheduler = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded">
-      <h2 className="text-2xl mb-6 font-semibold">Automated News Scheduler</h2>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">News Scheduler</h1>
+      </div>
       
       {message && (
-        <div className={`mb-4 p-3 rounded ${
+        <div className={`p-4 rounded-lg border ${
           messageType === 'success' 
-            ? 'bg-green-100 text-green-700 border border-green-300' 
-            : 'bg-red-100 text-red-700 border border-red-300'
+            ? 'bg-green-50 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800' 
+            : 'bg-red-50 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800'
         }`}>
           {message}
         </div>
       )}
 
       {status && (
-        <div className="mb-6 p-4 bg-gray-50 rounded">
-          <h3 className="text-lg font-semibold mb-3">Scheduler Status</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p><strong>Status:</strong> 
-                <span className={`ml-2 px-2 py-1 rounded text-sm ${
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Scheduler Status</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 mr-3">Status:</span>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                   status.isRunning 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' 
+                    : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                 }`}>
                   {status.isRunning ? 'Running' : 'Stopped'}
                 </span>
-              </p>
-              <p><strong>Schedule:</strong> {status.schedule}</p>
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Schedule: </span>
+                <span className="text-sm text-gray-900 dark:text-white">{status.schedule}</span>
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Last Run: </span>
+                <span className="text-sm text-gray-900 dark:text-white">
+                  {status.lastRun ? new Date(status.lastRun).toLocaleString() : 'Never'}
+                </span>
+              </div>
             </div>
             <div>
-              <p><strong>Categories:</strong></p>
-              <div className="flex flex-wrap gap-1 mt-1">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categories:</p>
+              <div className="flex flex-wrap gap-2">
                 {status.categories.map((category) => (
-                  <span key={category} className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
+                  <span key={category} className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 rounded-full text-sm font-medium">
                     {category}
                   </span>
                 ))}
@@ -119,64 +131,82 @@ const NewsScheduler = () => {
         </div>
       )}
 
-      <div className="space-y-4">
-        <div className="bg-blue-50 p-4 rounded">
-          <h3 className="text-lg font-semibold mb-2">How it works</h3>
-          <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
-            <li>Automatically fetches 10 trending news articles daily at 6:00 AM</li>
-            <li>Covers all categories: India, World, Health, Jobs, and Other</li>
-            <li>Uses multiple news APIs for comprehensive coverage</li>
-            <li>Prevents duplicate articles by checking existing titles</li>
-            <li>Falls back to mock data if external APIs are unavailable</li>
+      <div className="space-y-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">How it works</h3>
+          <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+            <li className="flex items-start">
+              <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+              Automatically fetches 10 trending news articles daily at 6:00 AM
+            </li>
+            <li className="flex items-start">
+              <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+              Covers all categories: India, World, Health, Jobs, Sports, Technology, IPO, Business, Entertainment, and Other
+            </li>
+            <li className="flex items-start">
+              <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+              Uses multiple news APIs for comprehensive coverage
+            </li>
+            <li className="flex items-start">
+              <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+              Prevents duplicate articles by checking existing titles
+            </li>
+            <li className="flex items-start">
+              <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+              Falls back to mock data if external APIs are unavailable
+            </li>
           </ul>
         </div>
 
-        <div className="flex flex-wrap gap-3">
-          <Button 
-            onClick={handleTriggerFetch} 
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            {loading ? 'Fetching...' : 'Trigger Manual Fetch'}
-          </Button>
-          
-          {status?.isRunning ? (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Actions</h3>
+          <div className="flex flex-wrap gap-3">
             <Button 
-              onClick={handleStopScheduler} 
+              onClick={handleTriggerFetch} 
               disabled={loading}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
             >
-              Stop Scheduler
+              {loading ? 'Fetching...' : 'Trigger Manual Fetch'}
             </Button>
-          ) : (
+            
+            {status?.isRunning ? (
+              <Button 
+                onClick={handleStopScheduler} 
+                disabled={loading}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
+              >
+                Stop Scheduler
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleStartScheduler} 
+                disabled={loading}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
+              >
+                Start Scheduler
+              </Button>
+            )}
+            
             <Button 
-              onClick={handleStartScheduler} 
+              onClick={fetchStatus} 
               disabled={loading}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
             >
-              Start Scheduler
+              Refresh Status
             </Button>
-          )}
-          
-          <Button 
-            onClick={fetchStatus} 
-            disabled={loading}
-            className="bg-gray-600 hover:bg-gray-700"
-          >
-            Refresh Status
-          </Button>
+          </div>
         </div>
 
-        <div className="bg-yellow-50 p-4 rounded">
-          <h3 className="text-lg font-semibold mb-2">API Configuration</h3>
-          <p className="text-sm text-gray-700 mb-2">
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold mb-3 text-amber-800 dark:text-amber-400">API Configuration</h3>
+          <p className="text-sm text-amber-700 dark:text-amber-300 mb-3">
             To use real news APIs, add these environment variables to your backend .env file:
           </p>
-          <div className="bg-gray-100 p-3 rounded font-mono text-sm">
-            <div>NEWS_API_KEY=your_newsapi_key_from_newsapi.org</div>
-            <div>GNEWS_API_KEY=your_gnews_key_from_gnews.io</div>
+          <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg font-mono text-sm border">
+            <div className="text-gray-800 dark:text-gray-200">NEWS_API_KEY=your_newsapi_key_from_newsapi.org</div>
+            <div className="text-gray-800 dark:text-gray-200">GNEWS_API_KEY=your_gnews_key_from_gnews.io</div>
           </div>
-          <p className="text-xs text-gray-600 mt-2">
+          <p className="text-xs text-amber-600 dark:text-amber-400 mt-3">
             Without these keys, the system will use mock data for testing.
           </p>
         </div>

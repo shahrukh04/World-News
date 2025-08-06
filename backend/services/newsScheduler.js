@@ -6,7 +6,7 @@ import User from '../models/userModel.js';
 class NewsScheduler {
   constructor() {
     this.isRunning = false;
-    this.categories = ['India', 'World', 'Health', 'Jobs', 'Other'];
+    this.categories = ['India', 'World', 'Health', 'Jobs', 'Sports', 'Technology', 'IPO', 'Other'];
   }
 
   // Schedule daily news fetching at 6:00 AM

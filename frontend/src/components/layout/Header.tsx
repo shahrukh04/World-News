@@ -1,6 +1,6 @@
 import { useState } from 'react'
  import { Link, useNavigate, useLocation } from 'react-router-dom'
- import { Search, Menu, User, Sun, Moon, Settings, Globe, MapPin, Heart, Briefcase, TrendingUp, Zap } from 'lucide-react'
+ import { Search, Menu, Sun, Moon, User, Globe, MapPin, Heart, Briefcase, TrendingUp, Zap, DollarSign } from 'lucide-react'
  import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
  import { useAuthStore } from '../../stores/authStore'
@@ -42,6 +42,7 @@ import { useUIStore } from '../../stores/uiStore'
      { label: 'Jobs', href: '/jobs-news', icon: Briefcase },
      { label: 'Sports', href: '/sports-news', icon: TrendingUp },
      { label: 'Technology', href: '/technology-news', icon: Zap },
+     { label: 'IPO', href: '/ipo-news', icon: DollarSign },
    ]
  
    return (
