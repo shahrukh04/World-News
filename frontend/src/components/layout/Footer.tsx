@@ -1,4 +1,4 @@
- import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
  import { Facebook, Twitter, Instagram, Linkedin, Github } from 'lucide-react'
  
  const Footer = () => {
@@ -8,14 +8,18 @@
      company: [
        { label: 'About', href: '/about' },
        { label: 'Contact', href: '/contact' },
-       { label: 'Privacy Policy', href: '/privacy' },
-       { label: 'Terms of Service', href: '/terms' },
+       { label: 'Privacy Policy', href: '/privacy-policy' },
+       { label: 'Terms of Service', href: '/terms-of-service' },
+       { label: 'Disclaimer', href: '/disclaimer' },
+       { label: 'Cookie Policy', href: '/cookie-policy' },
      ],
      content: [
-       { label: 'Latest Posts', href: '/posts' },
-       { label: 'Categories', href: '/categories' },
-       { label: 'Tags', href: '/tags' },
-       { label: 'Newsletter', href: '/newsletter' },
+       { label: 'India News', href: '/india-news' },
+       { label: 'World News', href: '/world-news' },
+       { label: 'Technology', href: '/technology-news' },
+       { label: 'Sports', href: '/sports-news' },
+       { label: 'Health', href: '/health-news' },
+       { label: 'Jobs', href: '/jobs-news' },
      ],
      social: [
        { label: 'Facebook', href: '#', icon: Facebook },
@@ -33,11 +37,11 @@
            {/* Brand */}
            <div className="md:col-span-1">
              <Link to="/" className="text-2xl font-bold text-primary">
-               BlogPlatform
+               World News
              </Link>
              <p className="mt-4 text-sm text-muted-foreground">
-               Premium content platform for developers, marketers, and entrepreneurs. 
-               Discover insights that drive growth.
+               Your trusted source for global news and current affairs. 
+               Stay informed with breaking news, analysis, and insights from around the world.
              </p>
            </div>
  
@@ -102,11 +106,11 @@
          <div className="mt-8 pt-8 border-t border-border">
            <div className="flex flex-col md:flex-row justify-between items-center">
              <p className="text-sm text-muted-foreground">
-               © {currentYear} BlogPlatform. All rights reserved.
+               © {currentYear} World News. All rights reserved.
              </p>
              <div className="flex items-center space-x-4 mt-4 md:mt-0">
                <span className="text-sm text-muted-foreground">
-                 Built with ❤️ using React & TypeScript
+                 Built with ❤️ by Shahrukh
                </span>
              </div>
            </div>

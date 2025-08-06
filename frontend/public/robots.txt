@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://worldnew.in/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+
+# Allow important pages for SEO
+Allow: /about
+Allow: /contact
+Allow: /privacy-policy
+Allow: /terms-of-service
+Allow: /disclaimer
+Allow: /cookie-policy
+Allow: /ads.txt

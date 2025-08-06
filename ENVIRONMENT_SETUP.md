@@ -5,7 +5,7 @@ This guide explains how to run the World News application in both **Production**
 ## 🌐 Live URLs
 
 - **Frontend (Production)**: https://www.worldnew.in
-- **Backend (Production)**: http://backendenv.eba-ptqvsdzi.eu-north-1.elasticbeanstalk.com
+- **Backend (Production)**: https://world-news-skvr.onrender.com
 - **Frontend (Local)**: http://localhost:3000
 - **Backend (Local)**: http://localhost:5000
 
@@ -90,7 +90,7 @@ npm run preview:prod
 - **Environment**: development
 
 #### Production (`.env.production`)
-- **API URL**: http://backendenv.eba-ptqvsdzi.eu-north-1.elasticbeanstalk.com
+- **API URL**: https://world-news-skvr.onrender.com
 - **Frontend URL**: https://www.worldnew.in
 - **CORS Origins**: www.worldnew.in, worldnew.in
 - **Environment**: production
@@ -103,7 +103,7 @@ npm run preview:prod
 - **Site Name**: World News - Dev
 
 #### Production (`.env.production`)
-- **API URL**: http://backendenv.eba-ptqvsdzi.eu-north-1.elasticbeanstalk.com/api
+- **API URL**: https://world-news-skvr.onrender.com/api
 - **Site URL**: https://www.worldnew.in
 - **Site Name**: World News
 
@@ -179,7 +179,7 @@ The backend automatically configures CORS based on the environment:
 curl http://localhost:5000/api/health
 
 # Check production backend
-curl http://backendenv.eba-ptqvsdzi.eu-north-1.elasticbeanstalk.com/api/health
+curl https://world-news-skvr.onrender.com/api/health
 ```
 
 ## 🔐 Security Considerations

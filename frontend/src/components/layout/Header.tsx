@@ -61,9 +61,9 @@ import { useUIStore } from '../../stores/uiStore'
              
              <Link to="/" className="flex items-center space-x-1 sm:space-x-2">
                <div className="bg-red-600 text-white px-2 sm:px-3 py-1 rounded font-bold text-lg sm:text-xl">
-                 AnSha
+                 World
                </div>
-               <span className="text-lg sm:text-xl font-bold text-gray-800">Times</span>
+               <span className="text-lg sm:text-xl font-bold text-gray-800">News</span>
              </Link>
            </div>
  

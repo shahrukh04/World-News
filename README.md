@@ -5,7 +5,7 @@ A full-stack news application optimized for SEO and monetization through Google 
 ## 🌐 Live Application
 
 - **Frontend**: https://www.worldnew.in
-- **Backend API**: http://backendenv.eba-ptqvsdzi.eu-north-1.elasticbeanstalk.com
+- **Backend API**: https://world-news-skvr.onrender.com
 
 ## 🏃‍♂️ Quick Start
 

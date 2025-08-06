@@ -21,7 +21,7 @@ Write-Host "Frontend: http://localhost:3000 (connecting to production API)" -For
 Write-Host ""
 Write-Host "Production URLs:" -ForegroundColor Magenta
 Write-Host "Frontend: https://www.worldnew.in" -ForegroundColor Cyan
-Write-Host "Backend: http://backendenv.eba-ptqvsdzi.eu-north-1.elasticbeanstalk.com" -ForegroundColor Cyan
+Write-Host "Backend: https://world-news-skvr.onrender.com" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Press any key to exit..." -ForegroundColor Gray
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

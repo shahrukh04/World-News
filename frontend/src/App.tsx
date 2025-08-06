@@ -15,6 +15,13 @@ import UserManagement from './pages/AdminPanel/UserManagement';
 import NewsScheduler from './components/AdminPanel/NewsScheduler';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import MainLayout from './components/layout/MainLayout';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import Disclaimer from './pages/Disclaimer';
+import CookiePolicy from './pages/CookiePolicy';
+import NotFound from './pages/NotFound';
 
 const App = () => {
   return (
@@ -30,6 +37,14 @@ const App = () => {
           <Route path="/news/:id" element={<NewsDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
+          {/* 404 Catch-all route */}
+          <Route path="*" element={<NotFound />} />
         </Route>
         <Route
           path="/admin"
@@ -55,7 +70,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        {/* Add 404 page route or redirect later */}
+
       </Routes>
   );
 };
