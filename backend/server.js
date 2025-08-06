@@ -8,7 +8,17 @@ import mainRoutes from './mainRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import newsScheduler from './services/newsScheduler.js';
 
+// Load environment-specific configuration
+const NODE_ENV = process.env.NODE_ENV || 'development';
+if (NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+} else {
+  dotenv.config({ path: '.env.local' });
+}
+
+// Fallback to default .env if specific env file doesn't exist
 dotenv.config();
+
 connectDB();
 
 const app = express();
@@ -17,8 +27,27 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middleware
-app.use(cors());
+// CORS Configuration
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : ['http://localhost:3000', 'http://127.0.0.1:3000'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 // Serve uploaded images statically

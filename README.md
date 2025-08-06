@@ -1,6 +1,33 @@
-# Monetized Blog Application
+# World News Application
 
-A full-stack blog application optimized for SEO and monetization through Google AdSense and affiliate marketing. Built with React, Node.js, and MongoDB, this application provides advanced content management, analytics, and revenue generation features.
+A full-stack news application optimized for SEO and monetization through Google AdSense and affiliate marketing. Built with React, Node.js, and MongoDB, this application provides advanced content management, analytics, and automated news fetching.
+
+## 🌐 Live Application
+
+- **Frontend**: https://www.worldnew.in
+- **Backend API**: http://backendenv.eba-ptqvsdzi.eu-north-1.elasticbeanstalk.com
+
+## 🏃‍♂️ Quick Start
+
+For detailed environment setup instructions, see [ENVIRONMENT_SETUP.md](./ENVIRONMENT_SETUP.md)
+
+### Local Development
+```bash
+# Backend
+cd backend && npm run dev
+
+# Frontend (new terminal)
+cd frontend && npm run dev:local
+```
+
+### Production Mode Testing
+```bash
+# Backend
+cd backend && npm run dev:prod
+
+# Frontend (new terminal)
+cd frontend && npm run dev:prod
+```
 
 ## 🚀 Features
 
