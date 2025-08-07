@@ -36,7 +36,10 @@ const App = () => {
           <Route path="/sports-news" element={<SportsNews />} />
           <Route path="/technology-news" element={<TechnologyNews />} />
           <Route path="/ipo-news" element={<IPONews />} />
+          // Change from:
           <Route path="/news/:id" element={<NewsDetail />} />
+          // To:
+          <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/about" element={<About />} />
