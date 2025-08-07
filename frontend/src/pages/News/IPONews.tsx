@@ -20,7 +20,7 @@ const IPONews = () => {
         news.title?.toLowerCase().includes('initial public offering') ||
         news.title?.toLowerCase().includes('stock market') ||
         news.title?.toLowerCase().includes('shares') ||
-        news.content?.toLowerCase().includes('ipo')
+        news.description?.toLowerCase().includes('ipo')
       );
       setNewsList(ipoNews);
       setLoading(false);
