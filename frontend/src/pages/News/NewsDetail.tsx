@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchNewsById, INews } from '../../services/api';
 import { getImageUrl } from '../../utils/imageUtils';
 import Sidebar from '../../components/common/Sidebar';
-import AdSenseAd from '../../AdSenseAd';
+import SimpleAd from '../../components/SimpleAd';
 
 const NewsDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -101,7 +101,7 @@ const NewsDetail: React.FC = () => {
     );
   }
 
-  const fallbackImage = 'https://via.placeholder.com/800x400/e5e7eb/6b7280?text=News+Image';
+  const fallbackImage = '/placeholder-image.svg';
   const imageUrl = getImageUrl(news.image);
 
   return (
@@ -174,11 +174,9 @@ const NewsDetail: React.FC = () => {
 
               {/* Ad Space */}
               <div className="my-8">
-                <AdSenseAd 
-              adSlot={import.meta.env.VITE_ADSENSE_SLOT_IN_ARTICLE} 
-              adFormat="fluid" 
-              adLayout="in-article" 
+                <SimpleAd 
               style={{ textAlign: 'center' }}
+              className="w-full"
             />
               </div>
 

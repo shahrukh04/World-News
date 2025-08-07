@@ -46,7 +46,7 @@ export const getImageUrlWithFallback = (
   fallbackUrl?: string
 ): string => {
   const imageUrl = getImageUrl(imagePath);
-  return imageUrl || fallbackUrl || '/placeholder-image.jpg';
+  return imageUrl || fallbackUrl || '/placeholder-image.svg';
 };
 
 /**

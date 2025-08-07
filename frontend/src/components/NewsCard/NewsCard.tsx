@@ -10,7 +10,7 @@ interface NewsCardProps {
 const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
   const [imageError, setImageError] = useState(false);
   const imageUrl = getImageUrl(news.image);
-  const fallbackImage = 'https://via.placeholder.com/800x400/e5e7eb/6b7280?text=News+Image';
+  const fallbackImage = '/placeholder-image.svg';
   
   return (
     <div className="border rounded shadow-sm overflow-hidden hover:shadow-lg transition-shadow mb-6">

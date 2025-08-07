@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/Badge'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { formatDate, generateExcerpt, readingTime } from '@/lib/utils'
 import type { Post, Category, Tag } from '@/types'
-import AdSenseAd from '../AdSenseAd'
+import SimpleAd from '../components/SimpleAd'
 
 // Move the long HTML string to a separate variable OUTSIDE the component
 const mockContent = `
@@ -361,7 +361,7 @@ const PostPage = () => {
         {/* Google AdSense - Top of Content */}
         {post.settings.adSenseEnabled && (
           <div className="container mx-auto px-4 py-4">
-            <AdSenseAd adSlot={import.meta.env.VITE_ADSENSE_SLOT_HORIZONTAL} adFormat="auto" className="w-full" />
+            <SimpleAd className="w-full" />
           </div>
         )}
 
@@ -454,13 +454,7 @@ const PostPage = () => {
             {/* Google AdSense - Middle of Content */}
             {post.settings.adSenseEnabled && (
               <div className="my-8">
-                <AdSenseAd 
-              adSlot={import.meta.env.VITE_ADSENSE_SLOT_IN_ARTICLE} 
-              adFormat="fluid" 
-              adLayout="in-article" 
-              style={{ textAlign: 'center' }}
-              className="w-full" 
-            />
+                <SimpleAd className="w-full" />
               </div>
             )}
 
@@ -539,12 +533,7 @@ const PostPage = () => {
         {/* Google AdSense - Bottom of Content */}
         {post.settings.adSenseEnabled && (
           <div className="container mx-auto px-4 py-4">
-            <AdSenseAd 
-              adSlot={import.meta.env.VITE_ADSENSE_SLOT_FLUID} 
-              adFormat="fluid" 
-              adLayoutKey="-fb+5w+4e-db+86"
-              className="w-full" 
-            />
+            <SimpleAd className="w-full" />
           </div>
         )}
       </div>

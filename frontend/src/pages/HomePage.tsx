@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/common/Sidebar';
 import { fetchNews, INews } from '../services/api';
 import NewsCard from '../components/NewsCard/NewsCard';
-import AdSenseAd from '../AdSenseAd';
+import SimpleAd from '../components/SimpleAd';
 import { Clock, TrendingUp, Globe, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ const Home = () => {
           <React.Fragment key={`${news._id}-with-ad`}>
             {newsItem}
             <div className="my-6">
-              <AdSenseAd adSlot={import.meta.env.VITE_ADSENSE_SLOT_RECTANGLE} adFormat="rectangle" />
+              <SimpleAd />
             </div>
           </React.Fragment>
         );
@@ -92,7 +92,7 @@ const Home = () => {
         
         {/* Top ad placement */}
         <div className="mb-6">
-          <AdSenseAd adSlot={import.meta.env.VITE_ADSENSE_SLOT_HORIZONTAL} adFormat="horizontal" />
+          <SimpleAd />
         </div>
 
         {/* Latest News Section */}
@@ -112,7 +112,7 @@ const Home = () => {
         
         {/* Bottom ad placement */}
         <div className="mt-8">
-          <AdSenseAd adSlot={import.meta.env.VITE_ADSENSE_SLOT_SIDEBAR} adFormat="horizontal" />
+          <SimpleAd />
         </div>
       </main>
     </div>

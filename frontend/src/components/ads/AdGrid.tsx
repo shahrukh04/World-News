@@ -1,5 +1,5 @@
 import React from 'react';
-import AdSenseAd from '../../AdSenseAd';
+import SimpleAd from '../SimpleAd';
 
 interface AdGridProps {
   adSlots: string[];
@@ -37,10 +37,7 @@ const AdGrid: React.FC<AdGridProps> = ({
       <div className={`grid ${gridClass} gap-4`}>
         {adSlots.map((slot, index) => (
           <div key={`ad-${slot}-${index}`} className="w-full">
-            <AdSenseAd 
-              adSlot={slot} 
-              adFormat={adFormat} 
-              fullWidthResponsive={true} 
+            <SimpleAd 
               className="w-full"
             />
           </div>

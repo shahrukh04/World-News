@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/common/Sidebar';
 import { fetchNews, INews } from '../services/api';
 import NewsCard from '../components/NewsCard/NewsCard';
-import AdSenseAd from '../AdSenseAd';
+import SimpleAd from '../components/SimpleAd';
 import { Globe, MapPin, Heart, Briefcase, TrendingUp, Zap, Clock } from 'lucide-react';
 
 interface Props {
@@ -86,7 +86,7 @@ const CategoryPageTemplate: React.FC<Props> = ({ category }) => {
           <React.Fragment key={`${news._id}-with-ad`}>
             {newsItem}
             <div className="my-6">
-              <AdSenseAd adSlot={import.meta.env.VITE_ADSENSE_SLOT_RECTANGLE} adFormat="auto" />
+              <SimpleAd />
             </div>
           </React.Fragment>
         );
@@ -114,17 +114,13 @@ const CategoryPageTemplate: React.FC<Props> = ({ category }) => {
         </div>
         
         <div className="mb-6">
-          <AdSenseAd adSlot={import.meta.env.VITE_ADSENSE_SLOT_HORIZONTAL} adFormat="auto" />
+          <SimpleAd />
         </div>
         
         {renderNewsWithAds()}
         
         <div className="mt-8">
-          <AdSenseAd 
-          adSlot={import.meta.env.VITE_ADSENSE_SLOT_FLUID} 
-          adFormat="fluid" 
-          adLayoutKey="-fb+5w+4e-db+86"
-        />
+          <SimpleAd />
         </div>
       </main>
      </div>

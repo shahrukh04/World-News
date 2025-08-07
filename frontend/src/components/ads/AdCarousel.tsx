@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import AdSenseAd from '../../AdSenseAd';
+import SimpleAd from '../SimpleAd';
 
 interface AdCarouselProps {
   adSlots: string[];
@@ -32,9 +32,7 @@ const AdCarousel: React.FC<AdCarouselProps> = ({
   if (adSlots.length === 1) {
     return (
       <div className={className}>
-        <AdSenseAd 
-          adSlot={adSlots[0]} 
-          adFormat={adFormat} 
+        <SimpleAd 
           className="w-full"
         />
       </div>
@@ -55,9 +53,7 @@ const AdCarousel: React.FC<AdCarouselProps> = ({
   return (
     <div className={`relative overflow-hidden ${className}`}>
       <div className="transition-opacity duration-500">
-        <AdSenseAd 
-          adSlot={adSlots[currentAdIndex]} 
-          adFormat={adFormat} 
+        <SimpleAd 
           className="w-full"
         />
       </div>

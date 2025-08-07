@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../components/common/Sidebar';
 import { fetchNews, INews } from '../../services/api';
 import NewsCard from '../../components/NewsCard/NewsCard';
-import AdSenseAd from '../../AdSenseAd';
+import SimpleAd from '../../components/SimpleAd';
 import { TrendingUp } from 'lucide-react';
 
 const SportsNews = () => {
@@ -57,7 +57,7 @@ const SportsNews = () => {
           <React.Fragment key={`${news._id}-with-ad`}>
             {newsItem}
             <div className="my-6">
-              <AdSenseAd adSlot={import.meta.env.VITE_ADSENSE_SLOT_RECTANGLE} adFormat="auto" />
+              <SimpleAd />
             </div>
           </React.Fragment>
         );
@@ -77,18 +77,13 @@ const SportsNews = () => {
         </div>
         
         <div className="mb-6">
-          <AdSenseAd adSlot={import.meta.env.VITE_ADSENSE_SLOT_HORIZONTAL} adFormat="auto" />
+          <SimpleAd />
         </div>
         
         {renderNewsWithAds()}
         
         <div className="mt-8">
-          <AdSenseAd 
-          adSlot={import.meta.env.VITE_ADSENSE_SLOT_IN_ARTICLE} 
-          adFormat="fluid" 
-          adLayout="in-article" 
-          style={{ textAlign: 'center' }}
-        />
+          <SimpleAd style={{ textAlign: 'center' }} />
         </div>
       </main>
     </div>
