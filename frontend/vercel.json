@@ -3,10 +3,26 @@
     {
       "source": "/api/(.*)",
       "destination": "https://world-news-skvr.onrender.com/api/$1"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/ads.txt",
+      "dest": "/ads.txt",
+      "headers": {
+        "Content-Type": "text/plain"
+      }
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/robots.txt",
+      "dest": "/robots.txt",
+      "headers": {
+        "Content-Type": "text/plain"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
