@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';                       
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';                       
 import { Shield, Eye, Cookie, Database, Mail } from 'lucide-react';
 
 const PrivacyPolicy: React.FC = () => {
