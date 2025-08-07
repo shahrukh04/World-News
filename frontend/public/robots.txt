@@ -1,19 +1,43 @@
 User-agent: *
 Allow: /
 
+# Main sitemap
 Sitemap: https://worldnew.in/sitemap.xml
+Sitemap: https://worldnew.in/sitemap-index.xml
 
 # Disallow admin and private areas
 Disallow: /admin/
 Disallow: /api/
 Disallow: /login
 Disallow: /register
+Disallow: /dashboard/
+Disallow: /private/
 
-# Allow important pages for SEO
+# Allow important SEO pages
+Allow: /
+Allow: /news/
+Allow: /india-news
+Allow: /world-news
+Allow: /sports-news
+Allow: /technology-news
+Allow: /health-news
+Allow: /jobs-news
+Allow: /ipo-news
 Allow: /about
 Allow: /contact
 Allow: /privacy-policy
 Allow: /terms-of-service
-Allow: /disclaimer
-Allow: /cookie-policy
-Allow: /ads.txt
+Allow: /search
+
+# Crawl delay for better server performance
+Crawl-delay: 1
+
+# Google News Bot
+User-agent: Googlebot-News
+Allow: /
+Allow: /news/
+
+# Bing Bot
+User-agent: bingbot
+Allow: /
+Crawl-delay: 2

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import Sidebar from '../components/common/Sidebar';
 import { fetchNews, INews } from '../services/api';
 import NewsCard from '../components/NewsCard/NewsCard';
@@ -33,6 +34,18 @@ const getCategoryColor = (category: string) => {
   }
 };
 
+const getCategoryDescription = (category: string) => {
+  switch (category.toLowerCase()) {
+    case 'world': return 'Latest world news, international affairs, and global updates from around the globe';
+    case 'india': return 'Breaking news from India, politics, economy, and current affairs from across the nation';
+    case 'health': return 'Health news, medical breakthroughs, wellness tips, and healthcare updates';
+    case 'jobs': return 'Latest job opportunities, career news, employment trends, and professional development';
+    case 'sports': return 'Sports news, live scores, match updates, and athletic achievements from around the world';
+    case 'technology': return 'Technology news, gadget reviews, tech innovations, and digital transformation updates';
+    default: return `Latest ${category.toLowerCase()} news and updates`;
+  }
+};
+
 const CategoryPageTemplate: React.FC<Props> = ({ category }) => {
   const [newsList, setNewsList] = useState<INews[]>([]);
   const [loading, setLoading] = useState(false);
@@ -51,6 +64,64 @@ const CategoryPageTemplate: React.FC<Props> = ({ category }) => {
 
     loadNews();
   }, [category]);
+
+  const categoryTitle = `${category.charAt(0).toUpperCase() + category.slice(1)} News`;
+  const categoryDescription = getCategoryDescription(category);
+  const canonicalUrl = `https://worldnew.in/${category.toLowerCase()}`;
+  
+  // Generate structured data for the category page
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": categoryTitle,
+    "description": categoryDescription,
+    "url": canonicalUrl,
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": newsList.length,
+      "itemListElement": newsList.slice(0, 10).map((news, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "NewsArticle",
+          "headline": news.title,
+          "description": news.description,
+          "url": `https://worldnew.in/news/${news._id}`,
+          "datePublished": news.createdAt,
+          "author": {
+            "@type": "Person",
+            "name": news.author || "World News Team"
+          }
+        }
+      }))
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "World News",
+      "url": "https://worldnew.in",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://worldnew.in/logo.png"
+      }
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://worldnew.in"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": categoryTitle,
+          "item": canonicalUrl
+        }
+      ]
+    }
+  };
 
   const renderNewsWithAds = () => {
     if (loading) {
@@ -100,31 +171,96 @@ const CategoryPageTemplate: React.FC<Props> = ({ category }) => {
   const colorClass = getCategoryColor(category);
 
   return (
-    <div className="flex max-w-7xl mx-auto mt-6 gap-8 px-4 lg:px-6">
-      <Sidebar />
-      <main className="flex-1 w-full lg:w-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2">
-          <div className="flex items-center space-x-3">
-            <Icon className={`h-6 w-6 sm:h-8 sm:w-8 ${colorClass}`} />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">{category} News</h1>
+    <>
+      <Helmet>
+        {/* Primary Meta Tags */}
+        <title>{categoryTitle} - Latest Updates | World News</title>
+        <meta name="title" content={`${categoryTitle} - Latest Updates | World News`} />
+        <meta name="description" content={categoryDescription} />
+        <meta name="keywords" content={`${category.toLowerCase()} news, latest ${category.toLowerCase()}, ${category.toLowerCase()} updates, breaking ${category.toLowerCase()} news, world news ${category.toLowerCase()}`} />
+        <link rel="canonical" href={canonicalUrl} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={`${categoryTitle} - Latest Updates | World News`} />
+        <meta property="og:description" content={categoryDescription} />
+        <meta property="og:image" content="https://worldnew.in/og-image.jpg" />
+        <meta property="og:site_name" content="World News" />
+        
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={canonicalUrl} />
+        <meta property="twitter:title" content={`${categoryTitle} - Latest Updates | World News`} />
+        <meta property="twitter:description" content={categoryDescription} />
+        <meta property="twitter:image" content="https://worldnew.in/og-image.jpg" />
+        
+        {/* Additional SEO Meta Tags */}
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="googlebot" content="index, follow" />
+        <meta name="bingbot" content="index, follow" />
+        <meta name="author" content="World News" />
+        <meta name="publisher" content="World News" />
+        <meta name="language" content="English" />
+        <meta name="revisit-after" content="1 day" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      </Helmet>
+      
+      <div className="flex max-w-7xl mx-auto mt-6 gap-8 px-4 lg:px-6">
+        <Sidebar />
+        <main className="flex-1 w-full lg:w-auto">
+          {/* Breadcrumb Navigation */}
+          <nav className="mb-4 text-sm" aria-label="Breadcrumb">
+            <ol className="flex items-center space-x-2 text-gray-500">
+              <li>
+                <a href="/" className="hover:text-blue-600 transition-colors">
+                  Home
+                </a>
+              </li>
+              <li className="flex items-center">
+                <span className="mx-2">/</span>
+                <span className="text-gray-700 font-medium">{categoryTitle}</span>
+              </li>
+            </ol>
+          </nav>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2">
+            <div className="flex items-center space-x-3">
+              <Icon className={`h-6 w-6 sm:h-8 sm:w-8 ${colorClass}`} />
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">{categoryTitle}</h1>
+            </div>
+            <div className="text-xs sm:text-sm text-gray-500">
+              Updated {new Date().toLocaleTimeString()}
+            </div>
           </div>
-          <div className="text-xs sm:text-sm text-gray-500">
-            Updated {new Date().toLocaleTimeString()}
+          
+          {/* Category Description */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500">
+            <p className="text-gray-700 leading-relaxed">{categoryDescription}</p>
+            {newsList.length > 0 && (
+              <p className="text-sm text-gray-600 mt-2">
+                Showing {newsList.length} latest {category.toLowerCase()} articles
+              </p>
+            )}
           </div>
-        </div>
-        
-        <div className="mb-6">
-          <SimpleAd />
-        </div>
-        
-        {renderNewsWithAds()}
-        
-        <div className="mt-8">
-          <SimpleAd />
-        </div>
-      </main>
-     </div>
-   );
+          
+          <div className="mb-6">
+            <SimpleAd />
+          </div>
+          
+          {renderNewsWithAds()}
+          
+          <div className="mt-8">
+            <SimpleAd />
+          </div>
+        </main>
+      </div>
+    </>
+  );
 };
 
 export default CategoryPageTemplate;
