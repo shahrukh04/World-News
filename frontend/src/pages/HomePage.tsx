@@ -16,16 +16,21 @@ const Home = () => {
   useEffect(() => {
     const loadNews = async () => {
       setLoading(true);
-      const data = await fetchNews();
-      setNewsList(data);
-      
-      // Set featured news (first 3 articles)
-      setFeaturedNews(data.slice(0, 3));
-      
-      // Set breaking news (latest 5 articles)
-      setBreakingNews(data.slice(0, 5));
-      
-      setLoading(false);
+      try {
+        const result = await fetchNews(undefined, 'published', 1, 50);
+        const data = result.news;
+        setNewsList(data);
+        
+        // Set featured news (first 3 articles)
+        setFeaturedNews(data.slice(0, 3));
+        
+        // Set breaking news (latest 5 articles)
+        setBreakingNews(data.slice(0, 5));
+      } catch (error) {
+        console.error('Error loading news:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadNews();

@@ -58,8 +58,10 @@ class NewsScheduler {
               title: article.title,
               category: category,
               description: article.description || article.content,
+              content: article.content || article.description || 'Content not available',
               image: article.image,
               author: adminUser._id,
+              status: 'published',
             };
 
             const news = new News(newsData);

@@ -3,9 +3,11 @@ import {
   createNews,
   getNews,
   getNewsById,
+  updateNews,
   deleteNews,
 } from '../controllers/newsController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { optimizeImage, generateThumbnail } from '../middleware/imageOptimization.js';
 import multer from 'multer';
 import path from 'path';
 
@@ -25,10 +27,11 @@ const router = express.Router();
 
 router.route('/')
   .get(getNews)
-  .post(protect, upload.single('image'), createNews);
+  .post(protect, upload.single('image'), optimizeImage, generateThumbnail, createNews);
 
 router.route('/:id')
   .get(getNewsById)
+  .put(protect, upload.single('image'), optimizeImage, generateThumbnail, updateNews)
   .delete(protect, deleteNews);
 
 export default router;

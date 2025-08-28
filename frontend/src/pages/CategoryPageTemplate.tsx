@@ -53,13 +53,14 @@ const CategoryPageTemplate: React.FC<Props> = ({ category }) => {
   useEffect(() => {
     const loadNews = async () => {
       setLoading(true);
-      const data = await fetchNews();
-      // Filter for specific category
-      const categoryNews = data.filter((news: INews) => 
-        news.category?.toLowerCase() === category.toLowerCase()
-      );
-      setNewsList(categoryNews);
-      setLoading(false);
+      try {
+        const result = await fetchNews(category, 'published', 1, 50);
+        setNewsList(result.news);
+      } catch (error) {
+        console.error(`Error loading ${category} news:`, error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadNews();

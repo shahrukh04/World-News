@@ -50,8 +50,19 @@ app.use(cors({
 
 app.use(express.json());
 
-// Serve uploaded images statically
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+// Serve uploaded images statically with caching headers
+app.use('/uploads', express.static(path.join(__dirname, '/uploads'), {
+  maxAge: '1y', // Cache for 1 year
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, path) => {
+    // Set cache headers for images
+    if (path.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.setHeader('Vary', 'Accept-Encoding');
+    }
+  }
+}));
 
 // Routes
 app.use(mainRoutes);

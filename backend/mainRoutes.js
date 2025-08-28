@@ -2,6 +2,7 @@ import express from 'express';
 import userRoutes from './routes/userRoute.js';
 import newsRoutes from './routes/newsRoute.js';
 import schedulerRoutes from './routes/schedulerRoute.js';
+import sitemapRoutes from './routes/sitemapRoute.js';
 import mongoose from 'mongoose';
 
 const router = express.Router();
@@ -26,8 +27,10 @@ router.get('/api/health', (req, res) => {
   });
 });
 
+// Routes
 router.use('/api/users', userRoutes);
 router.use('/api/news', newsRoutes);
 router.use('/api/scheduler', schedulerRoutes);
+router.use('/', sitemapRoutes); // Add sitemap route
 
 export default router;

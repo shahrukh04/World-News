@@ -22,6 +22,8 @@ router.post('/trigger-news-fetch', protect, async (req, res) => {
   }
 });
 
+
+
 // Get scheduler status
 router.get('/status', protect, (req, res) => {
   res.json({
@@ -59,6 +61,24 @@ router.post('/start', protect, (req, res) => {
   } catch (error) {
     res.status(500).json({ 
       message: 'Error starting scheduler',
+      error: error.message 
+    });
+  }
+});
+
+// Temporary public endpoint for testing news fetch
+router.post('/test-fetch', async (req, res) => {
+  try {
+    console.log('Test news fetch triggered');
+    await newsScheduler.triggerManualFetch();
+    res.json({ 
+      message: 'Test news fetch completed successfully',
+      status: 'success'
+    });
+  } catch (error) {
+    console.error('Error in test news fetch:', error);
+    res.status(500).json({ 
+      message: 'Error in test news fetch',
       error: error.message 
     });
   }

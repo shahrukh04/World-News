@@ -1,33 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../../components/common/Sidebar';
-import { fetchNews, INews } from '../../services/api';
+import { fetchNews, INews, IPaginatedNews } from '../../services/api';
 import NewsCard from '../../components/NewsCard/NewsCard';
 import SimpleAd from '../../components/SimpleAd';
+import Pagination from '../../components/ui/Pagination';
 import { TrendingUp, DollarSign } from 'lucide-react';
 
 const IPONews = () => {
   const [newsList, setNewsList] = useState<INews[]>([]);
   const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState<IPaginatedNews['pagination'] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const loadNews = async (page: number = 1) => {
+    try {
+      setLoading(true);
+      const result = await fetchNews('IPO', 'published', page, 12);
+      setNewsList(result.news);
+      setPagination(result.pagination);
+      setCurrentPage(page);
+    } catch (error) {
+      console.error('Error loading IPO news:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadNews = async () => {
-      setLoading(true);
-      const data = await fetchNews();
-      // Filter for IPO news
-      const ipoNews = data.filter((news: INews) => 
-        news.category?.toLowerCase() === 'ipo' ||
-        news.title?.toLowerCase().includes('ipo') ||
-        news.title?.toLowerCase().includes('initial public offering') ||
-        news.title?.toLowerCase().includes('stock market') ||
-        news.title?.toLowerCase().includes('shares') ||
-        news.description?.toLowerCase().includes('ipo')
-      );
-      setNewsList(ipoNews);
-      setLoading(false);
-    };
-
     loadNews();
   }, []);
+
+  const handlePageChange = (page: number) => {
+    loadNews(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const renderNewsWithAds = () => {
     if (loading) {
@@ -86,6 +92,19 @@ const IPONews = () => {
         </div>
         
         {renderNewsWithAds()}
+        
+        {/* Pagination */}
+        {pagination && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.totalItems}
+            hasNextPage={pagination.hasNextPage}
+            hasPrevPage={pagination.hasPrevPage}
+            onPageChange={handlePageChange}
+            className="mt-8 mb-6"
+          />
+        )}
         
         <div className="mt-8">
           <SimpleAd style={{ textAlign: 'center' }} />

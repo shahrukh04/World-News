@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchNewsById, INews } from '../../services/api';
-import { getImageUrl } from '../../utils/imageUtils';
 import Sidebar from '../../components/common/Sidebar';
 import SimpleAd from '../../components/SimpleAd';
+import LazyImage from '../../components/LazyImage/LazyImage';
 import { Helmet } from 'react-helmet-async';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const NewsDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,7 +13,6 @@ const NewsDetail: React.FC = () => {
   const [news, setNews] = useState<INews | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     const loadNews = async () => {
@@ -161,25 +161,14 @@ const NewsDetail: React.FC = () => {
                 </div>
 
                 {/* Featured Image */}
-                {news.image && !imageError && (
-                  <div className="mb-6">
-                    <img
-                      src={imageUrl}
-                      alt={news.title}
-                      className="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover rounded-lg"
-                      onError={() => setImageError(true)}
-                    />
-                  </div>
-                )}
-                {(!news.image || imageError) && (
-                  <div className="mb-6">
-                    <img
-                      src={fallbackImage}
-                      alt={news.title}
-                      className="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover rounded-lg opacity-75"
-                    />
-                  </div>
-                )}
+                <div className="mb-6">
+                  <LazyImage
+                    src={news.image}
+                    alt={news.title}
+                    className="w-full h-48 sm:h-64 md:h-80 lg:h-96 rounded-lg"
+                    fallbackSrc="/placeholder-image.svg"
+                  />
+                </div>
 
                 {/* Article Content */}
                 <div className="prose max-w-none">

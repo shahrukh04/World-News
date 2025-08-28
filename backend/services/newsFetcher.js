@@ -1,6 +1,15 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 
+// Load environment-specific configuration
+const NODE_ENV = process.env.NODE_ENV || 'development';
+if (NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+} else {
+  dotenv.config({ path: '.env.local' });
+}
+
+// Fallback to default .env if specific env file doesn't exist
 dotenv.config();
 
 class NewsFetcher {
@@ -39,6 +48,7 @@ class NewsFetcher {
     }
 
     try {
+      console.log(`Calling NewsAPI for category: ${category}`);
       const categoryConfig = this.getCategoryKeywords(category);
       let url = `${this.baseUrls.newsapi}/top-headlines`;
       
@@ -54,23 +64,30 @@ class NewsFetcher {
       if (categoryConfig.category) {
         params.category = categoryConfig.category;
       }
-      if (categoryConfig.keywords) {
-        params.q = categoryConfig.keywords;
-      }
+      // Temporarily disable keyword filtering to get broader results
+      // if (categoryConfig.keywords) {
+      //   params.q = categoryConfig.keywords;
+      // }
 
+      console.log(`NewsAPI request params:`, params);
       const response = await axios.get(url, { params });
+      console.log(`NewsAPI response status: ${response.status}, articles count: ${response.data.articles.length}`);
       
       return response.data.articles.map(article => ({
         title: article.title,
         description: article.description,
-        content: article.content,
+        content: article.content || article.description || 'Content not available',
         image: article.urlToImage,
         source: article.source.name,
         publishedAt: article.publishedAt,
-        url: article.url
+        url: article.url,
+        category: category
       }));
     } catch (error) {
       console.error('Error fetching from NewsAPI:', error.message);
+      if (error.response) {
+        console.error('NewsAPI error response:', error.response.status, error.response.data);
+      }
       return [];
     }
   }
@@ -111,7 +128,8 @@ class NewsFetcher {
         image: article.image,
         source: article.source.name,
         publishedAt: article.publishedAt,
-        url: article.url
+        url: article.url,
+        category: category
       }));
     } catch (error) {
       console.error('Error fetching from GNews:', error.message);
@@ -230,10 +248,11 @@ class NewsFetcher {
       articles = articles.concat(gnewsArticles);
     }
 
-    // Use mock data if no real articles were fetched
+    // Log if no articles were fetched from APIs
     if (articles.length === 0) {
-      console.log(`No articles from APIs, using mock data for category: ${category}`);
-      articles = this.generateMockNews(category, limit);
+      console.log(`No articles fetched from APIs for category: ${category}`);
+    } else {
+      console.log(`Successfully fetched ${articles.length} articles for category: ${category}`);
     }
 
     // Ensure we don't exceed the limit
