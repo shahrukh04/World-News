@@ -83,7 +83,17 @@ const Home = () => {
 
   // Function to insert ads between news items
   const renderNewsWithAds = () => {
-    if (loading) return <p>Loading news...</p>;
+    if (loading) {
+      return (
+        <div className="flex flex-col items-center justify-center py-16 space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Fetching Latest News</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Please wait while we gather the most recent updates for you</p>
+          </div>
+        </div>
+      );
+    };
     
     return newsList.map((news, index) => {
       // Insert an ad after every 3 news items
