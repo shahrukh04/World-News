@@ -1,33 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import Sidebar from '../components/common/Sidebar';
-import { fetchNews, INews } from '../services/api';
-import NewsCard from '../components/NewsCard/NewsCard';
-import SimpleAd from '../components/SimpleAd';
-import { Clock, TrendingUp, Globe, AlertCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Clock, AlertCircle, TrendingUp, Globe, ArrowRight } from 'lucide-react';
+
+// API Types
+interface INews {
+  _id: string;
+  title: string;
+  slug: string;
+  category: string;
+  description: string;
+  content: string;
+  image?: string;
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+  status: 'draft' | 'published' | 'archived';
+  featured: boolean;
+  trending: boolean;
+  views: number;
+  shares: number;
+  likes: number;
+}
 
 const Home = () => {
   const [newsList, setNewsList] = useState<INews[]>([]);
-  const [featuredNews, setFeaturedNews] = useState<INews[]>([]);
-  const [breakingNews, setBreakingNews] = useState<INews[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Get image URL helper
+  const getImageUrl = (image?: string) => {
+    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
+    if (image.startsWith('http')) return image;
+    return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${image}`;
+  };
 
   useEffect(() => {
     const loadNews = async () => {
       setLoading(true);
       try {
-        const result = await fetchNews(undefined, 'published', 1, 50);
-        const data = result.news;
-        setNewsList(data);
-        
-        // Set featured news (first 3 articles)
-        setFeaturedNews(data.slice(0, 3));
-        
-        // Set breaking news (latest 5 articles)
-        setBreakingNews(data.slice(0, 5));
-      } catch (error) {
-        console.error('Error loading news:', error);
+        // Replace with your actual API endpoint
+        const response = await fetch('/api/news?status=published&limit=50');
+        const data = await response.json();
+        setNewsList(data?.news || []);
+      } catch (err) {
+        console.error('Error loading news:', err);
+        setError('Failed to load news');
       } finally {
         setLoading(false);
       }
@@ -36,189 +52,220 @@ const Home = () => {
     loadNews();
   }, []);
 
-  // Structured data for homepage
-  const websiteStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "World News",
-    "alternateName": "WorldNew.in",
-    "url": "https://worldnew.in",
-    "description": "Your trusted source for breaking news, world updates, India news, health, sports, technology, and jobs. Stay informed with accurate and timely news coverage.",
-    "publisher": {
-      "@type": "Organization",
-      "name": "World News",
-      "url": "https://worldnew.in",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://worldnew.in/logo.png"
-      }
-    },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://worldnew.in/search?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+  // Format date like BBC
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+
+    if (diffMins < 60) return `${diffMins} mins ago`;
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   };
 
-  const organizationStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "NewsMediaOrganization",
-    "name": "World News",
-    "url": "https://worldnew.in",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://worldnew.in/logo.png"
-    },
-    "sameAs": [
-      "https://www.facebook.com/worldnew.in",
-      "https://twitter.com/worldnew_in",
-      "https://www.linkedin.com/company/worldnew"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "customer service",
-      "url": "https://worldnew.in/contact"
-    }
+  // Get category color
+  const getCategoryColor = (category: string) => {
+    const colors: Record<string, string> = {
+      'World': 'bg-red-600',
+      'Business': 'bg-blue-600',
+      'Technology': 'bg-purple-600',
+      'Sport': 'bg-yellow-600',
+      'Health': 'bg-green-600',
+      'Entertainment': 'bg-pink-600',
+      'Politics': 'bg-indigo-600',
+    };
+    return colors[category] || 'bg-gray-600';
   };
 
-  // Function to insert ads between news items
-  const renderNewsWithAds = () => {
-    if (loading) {
-      return (
-        <div className="flex flex-col items-center justify-center py-16 space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Fetching Latest News</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Please wait while we gather the most recent updates for you</p>
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="max-w-[1280px] mx-auto px-4 py-20">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-red-600"></div>
+            <p className="text-xl font-medium text-gray-700">Loading latest news...</p>
           </div>
         </div>
-      );
-    };
-    
-    return newsList.map((news, index) => {
-      // Insert an ad after every 3 news items
-      const newsItem = <NewsCard key={news._id} news={news} />;
-      
-      if ((index + 1) % 3 === 0 && index < newsList.length - 1) {
-        return (
-          <React.Fragment key={`${news._id}-with-ad`}>
-            {newsItem}
-            <div className="my-6">
-              <SimpleAd />
-            </div>
-          </React.Fragment>
-        );
-      }
-      
-      return newsItem;
-    });
-  };
+      </div>
+    );
+  }
+
+  if (error || newsList.length === 0) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="max-w-[1280px] mx-auto px-4 py-20">
+          <div className="text-center">
+            <p className="text-xl text-gray-600">No news articles available</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const heroArticle = newsList[0];
+  const featuredArticles = newsList.slice(1, 4);
+  const secondaryArticles = newsList.slice(4, 8);
+  const latestNews = newsList.slice(8);
 
   return (
-    <>
-      <Helmet>
-        <title>World News - Breaking News & Current Affairs | Latest Updates</title>
-        <meta name="description" content="Stay updated with World News - your trusted source for breaking news, world updates, India news, health, sports, technology, and jobs. Get accurate and timely news coverage 24/7." />
-        <meta name="keywords" content="world news, breaking news, India news, international news, sports news, technology news, health news, job news, IPO news, current affairs" />
-        <link rel="canonical" href="https://worldnew.in/" />
-        
-        {/* Open Graph Tags */}
-        <meta property="og:title" content="World News - Breaking News & Current Affairs" />
-        <meta property="og:description" content="Stay updated with World News - your trusted source for breaking news, world updates, India news, health, sports, technology, and jobs." />
-        <meta property="og:url" content="https://worldnew.in/" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://worldnew.in/og-image.jpg" />
-        <meta property="og:site_name" content="World News" />
-        
-        {/* Twitter Card Tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="World News - Breaking News & Current Affairs" />
-        <meta name="twitter:description" content="Stay updated with World News - your trusted source for breaking news, world updates, India news, health, sports, technology, and jobs." />
-        <meta name="twitter:image" content="https://worldnew.in/twitter-image.jpg" />
-        
-        {/* Additional SEO Tags */}
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-        <meta name="googlebot" content="index, follow" />
-        <meta name="author" content="World News Team" />
-        <meta name="publisher" content="World News" />
-        <meta name="language" content="en" />
-        <meta name="geo.region" content="IN" />
-        <meta name="geo.country" content="India" />
-        
-        {/* Structured Data */}
-        <script type="application/ld+json">
-          {JSON.stringify(websiteStructuredData)}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify(organizationStructuredData)}
-        </script>
-      </Helmet>
-      
-      <div className="flex max-w-7xl mx-auto mt-6 gap-8 px-4 lg:px-6">
-        <Sidebar />
-        <main className="flex-1 w-full lg:w-auto">
-          {/* Breaking News Ticker */}
-          <div className="bg-red-600 text-white p-3 rounded-lg mb-6 overflow-hidden">
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse" />
-                <span className="font-bold text-xs sm:text-sm uppercase tracking-wide">Breaking</span>
-              </div>
+    <div className="min-h-screen bg-white">
+      {/* Breaking News Banner */}
+      <div className="bg-red-600 text-white">
+        <div className="max-w-[1280px] mx-auto px-4">
+          <div className="flex items-center py-2 gap-3">
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <AlertCircle className="h-5 w-5 animate-pulse" />
+              <span className="font-bold text-sm uppercase tracking-wider">Breaking</span>
+            </div>
+            <div className="flex-1 overflow-hidden">
               <div className="animate-marquee whitespace-nowrap">
-                <span className="text-xs sm:text-sm">
-                  Latest updates from around the world • Stay informed with World News • Breaking news as it happens
+                <span className="text-sm">
+                  {newsList.slice(0, 3).map(news => news.title).join(' • ')}
                 </span>
               </div>
             </div>
           </div>
-
-          {/* Featured Stories Section */}
-          {!loading && featuredNews.length > 0 && (
-            <section className="mb-8">
-              <div className="flex items-center space-x-2 mb-4">
-                <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Featured Stories</h1>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-                {featuredNews.map((news) => (
-                  <article key={news._id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                    <NewsCard news={news} />
-                  </article>
-                ))}
-              </div>
-            </section>
-          )}
-          
-          {/* Top ad placement */}
-          <div className="mb-6">
-            <SimpleAd />
-          </div>
-
-          {/* Latest News Section */}
-          <section>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2">
-              <div className="flex items-center space-x-2">
-                <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Latest News</h2>
-              </div>
-              <div className="text-xs sm:text-sm text-gray-500">
-                Updated {new Date().toLocaleTimeString()}
-              </div>
-            </div>
-            
-            <div className="space-y-6">
-              {renderNewsWithAds()}
-            </div>
-          </section>
-          
-          {/* Bottom ad placement */}
-          <div className="mt-8">
-            <SimpleAd />
-          </div>
-        </main>
+        </div>
       </div>
-    </>
+
+      {/* Main Content */}
+      <div className="max-w-[1280px] mx-auto px-4">
+        {/* Hero Section - BBC Style */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border-b border-gray-200 py-6">
+          {/* Main Hero Article - Takes 2 columns */}
+          <div className="lg:col-span-2 lg:border-r border-gray-200 lg:pr-6">
+            <article className="group cursor-pointer">
+              <div className="relative overflow-hidden bg-black mb-4">
+                <img
+                  src={getImageUrl(heroArticle.image)}
+                  alt={heroArticle.title}
+                  className="w-full h-[400px] object-cover group-hover:opacity-90 transition-opacity"
+                />
+              </div>
+              <div className="space-y-3">
+                <span className={`inline-block px-2 py-1 text-white text-xs font-bold uppercase ${getCategoryColor(heroArticle.category)}`}>
+                  {heroArticle.category}
+                </span>
+                <h1 className="text-4xl font-bold text-gray-900 leading-tight group-hover:text-red-600 transition-colors">
+                  {heroArticle.title}
+                </h1>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  {heroArticle.description}
+                </p>
+                <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <span>{formatDate(heroArticle.createdAt)}</span>
+                  {heroArticle.views > 0 && (
+                    <span className="flex items-center gap-1">
+                      <Globe className="h-4 w-4" />
+                      {heroArticle.views} views
+                    </span>
+                  )}
+                </div>
+              </div>
+            </article>
+          </div>
+
+          {/* Side Featured Articles */}
+          <div className="lg:pl-6 space-y-6 mt-6 lg:mt-0">
+            {featuredArticles.map((news) => (
+              <article key={news._id} className="group cursor-pointer pb-6 border-b border-gray-200 last:border-0">
+                <div className="flex gap-4">
+                  <div className="w-32 h-24 flex-shrink-0 overflow-hidden bg-gray-100">
+                    <img
+                      src={getImageUrl(news.image)}
+                      alt={news.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-bold text-gray-600 uppercase">{news.category}</span>
+                    <h3 className="text-base font-bold text-gray-900 mt-1 line-clamp-3 group-hover:text-red-600 transition-colors">
+                      {news.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        {/* Secondary Grid Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-8 border-b border-gray-200">
+          {secondaryArticles.map((news) => (
+            <article key={news._id} className="group cursor-pointer">
+              <div className="relative overflow-hidden bg-gray-100 mb-3">
+                <img
+                  src={getImageUrl(news.image)}
+                  alt={news.title}
+                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform"
+                />
+              </div>
+              <span className="text-xs font-bold text-gray-600 uppercase">{news.category}</span>
+              <h3 className="text-lg font-bold text-gray-900 mt-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                {news.title}
+              </h3>
+              <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                {news.description}
+              </p>
+              <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
+            </article>
+          ))}
+        </div>
+
+        {/* Latest News - List View */}
+        <div className="py-8">
+          <div className="flex items-center gap-3 mb-6">
+            <TrendingUp className="h-6 w-6 text-red-600" />
+            <h2 className="text-3xl font-bold text-gray-900">Latest News</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {latestNews.map((news) => (
+              <article key={news._id} className="group cursor-pointer border-b border-gray-200 pb-6">
+                <div className="flex gap-4">
+                  <div className="w-28 h-20 flex-shrink-0 overflow-hidden bg-gray-100">
+                    <img
+                      src={getImageUrl(news.image)}
+                      alt={news.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-bold text-gray-600 uppercase">{news.category}</span>
+                    <h4 className="text-sm font-bold text-gray-900 mt-1 line-clamp-3 group-hover:text-red-600 transition-colors">
+                      {news.title}
+                    </h4>
+                    <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          {/* Load More Button */}
+          <div className="text-center mt-8">
+            <button className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-bold hover:bg-red-700 transition-colors">
+              <span>More News</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Marquee Animation */}
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 20s linear infinite;
+        }
+      `}</style>
+    </div>
   );
 };
 

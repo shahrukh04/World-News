@@ -80,6 +80,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
         ref={imgRef}
         src={currentSrc}
         alt={alt}
+        decoding="async"
         className={`w-full h-full object-cover transition-opacity duration-300 ${
           isLoaded ? 'opacity-100' : 'opacity-75'
         }`}

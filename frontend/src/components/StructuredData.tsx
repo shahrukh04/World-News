@@ -15,7 +15,7 @@ const StructuredData: React.FC<StructuredDataProps> = ({ news }) => {
     "image": getImageUrl(news.image),
     "author": {
       "@type": "Person",
-      "name": news.author || "World News Team"
+      "name": (typeof news.author === 'string') ? news.author : ((news.author && ((news.author as any).username || (news.author as any).firstName || (news.author as any).name)) || "World News Team")
     },
     "publisher": {
       "@type": "Organization",

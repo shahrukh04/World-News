@@ -1,266 +1,370 @@
 import React, { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import Sidebar from '../components/common/Sidebar';
-import { fetchNews, INews } from '../services/api';
-import NewsCard from '../components/NewsCard/NewsCard';
-import SimpleAd from '../components/SimpleAd';
-import { Globe, MapPin, Heart, Briefcase, TrendingUp, Zap, Clock } from 'lucide-react';
+import { Clock, TrendingUp, Filter, Grid, List, ChevronRight } from 'lucide-react';
 
-interface Props {
+// API Types
+interface INews {
+  _id: string;
+  title: string;
+  slug: string;
+  category: string;
+  description: string;
+  content: string;
+  image?: string;
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+  status: 'draft' | 'published' | 'archived';
+  featured: boolean;
+  trending: boolean;
+  views: number;
+  shares: number;
+  likes: number;
+}
+
+interface CategoryPageTemplateProps {
   category: string;
 }
 
-const getCategoryIcon = (category: string) => {
-  switch (category.toLowerCase()) {
-    case 'world': return Globe;
-    case 'india': return MapPin;
-    case 'health': return Heart;
-    case 'jobs': return Briefcase;
-    case 'sports': return TrendingUp;
-    case 'technology': return Zap;
-    default: return Clock;
-  }
-};
-
-const getCategoryColor = (category: string) => {
-  switch (category.toLowerCase()) {
-    case 'world': return 'text-blue-600';
-    case 'india': return 'text-orange-600';
-    case 'health': return 'text-red-600';
-    case 'jobs': return 'text-indigo-600';
-    case 'sports': return 'text-green-600';
-    case 'technology': return 'text-purple-600';
-    default: return 'text-gray-600';
-  }
-};
-
-const getCategoryDescription = (category: string) => {
-  switch (category.toLowerCase()) {
-    case 'world': return 'Latest world news, international affairs, and global updates from around the globe';
-    case 'india': return 'Breaking news from India, politics, economy, and current affairs from across the nation';
-    case 'health': return 'Health news, medical breakthroughs, wellness tips, and healthcare updates';
-    case 'jobs': return 'Latest job opportunities, career news, employment trends, and professional development';
-    case 'sports': return 'Sports news, live scores, match updates, and athletic achievements from around the world';
-    case 'technology': return 'Technology news, gadget reviews, tech innovations, and digital transformation updates';
-    default: return `Latest ${category.toLowerCase()} news and updates`;
-  }
-};
-
-const CategoryPageTemplate: React.FC<Props> = ({ category }) => {
+const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category }) => {
   const [newsList, setNewsList] = useState<INews[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState<'latest' | 'popular'>('latest');
+
+  // Get image URL helper
+  const getImageUrl = (image?: string) => {
+    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
+    if (image.startsWith('http')) return image;
+    return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${image}`;
+  };
 
   useEffect(() => {
     const loadNews = async () => {
       setLoading(true);
       try {
-        const result = await fetchNews(category, 'published', 1, 50);
-        setNewsList(result.news);
-      } catch (error) {
-        console.error(`Error loading ${category} news:`, error);
+        // Replace with your actual API endpoint
+        const response = await fetch(`/api/news?category=${category}&status=published&limit=50`);
+        const data = await response.json();
+        let articles = data?.news || [];
+
+        // Sort articles
+        if (sortBy === 'popular') {
+          articles = articles.sort((a: INews, b: INews) => b.views - a.views);
+        } else {
+          articles = articles.sort((a: INews, b: INews) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        }
+
+        setNewsList(articles);
+      } catch (err) {
+        console.error('Error loading news:', err);
       } finally {
         setLoading(false);
       }
     };
 
     loadNews();
-  }, [category]);
+  }, [category, sortBy]);
 
-  const categoryTitle = `${category.charAt(0).toUpperCase() + category.slice(1)} News`;
-  const categoryDescription = getCategoryDescription(category);
-  const canonicalUrl = `https://worldnew.in/${category.toLowerCase()}`;
-  
-  // Generate structured data for the category page
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": categoryTitle,
-    "description": categoryDescription,
-    "url": canonicalUrl,
-    "mainEntity": {
-      "@type": "ItemList",
-      "numberOfItems": newsList.length,
-      "itemListElement": newsList.slice(0, 10).map((news, index) => ({
-        "@type": "ListItem",
-        "position": index + 1,
-        "item": {
-          "@type": "NewsArticle",
-          "headline": news.title,
-          "description": news.description,
-          "url": `https://worldnew.in/news/${news._id}`,
-          "datePublished": news.createdAt,
-          "author": {
-            "@type": "Person",
-            "name": news.author || "World News Team"
-          }
-        }
-      }))
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "World News",
-      "url": "https://worldnew.in",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://worldnew.in/logo.png"
-      }
-    },
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://worldnew.in"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": categoryTitle,
-          "item": canonicalUrl
-        }
-      ]
-    }
+  // Format date like BBC
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+
+    if (diffMins < 60) return `${diffMins} mins ago`;
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
-  const renderNewsWithAds = () => {
-    if (loading) {
-      return (
-        <div className="space-y-6">
-          {[...Array(6)].map((_, index) => (
-            <div key={index} className="animate-pulse">
-              <div className="bg-gray-300 h-48 rounded-lg mb-4"></div>
-              <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-              <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    
-    if (newsList.length === 0) {
-      const Icon = getCategoryIcon(category);
-      return (
-        <div className="text-center py-12">
-          <Icon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-600 mb-2">No {category} News Available</h3>
-          <p className="text-gray-500">Check back later for the latest {category.toLowerCase()} updates.</p>
-        </div>
-      );
-    }
-    
-    return newsList.map((news, index) => {
-      const newsItem = <NewsCard key={news._id} news={news} />;
-      
-      if ((index + 1) % 3 === 0 && index < newsList.length - 1) {
-        return (
-          <React.Fragment key={`${news._id}-with-ad`}>
-            {newsItem}
-            <div className="my-6">
-              <SimpleAd />
-            </div>
-          </React.Fragment>
-        );
-      }
-      
-      return newsItem;
-    });
+  // Get category color
+  const getCategoryColor = (cat: string) => {
+    const colors: Record<string, string> = {
+      'World': 'bg-red-600',
+      'Business': 'bg-blue-600',
+      'Technology': 'bg-purple-600',
+      'Sport': 'bg-yellow-600',
+      'Health': 'bg-green-600',
+      'Entertainment': 'bg-pink-600',
+      'Politics': 'bg-indigo-600',
+    };
+    return colors[cat] || 'bg-gray-600';
   };
 
-  const Icon = getCategoryIcon(category);
-  const colorClass = getCategoryColor(category);
+  // Get category description
+  const getCategoryDescription = (cat: string) => {
+    const descriptions: Record<string, string> = {
+      'World': 'International news, global affairs, and breaking stories from around the world',
+      'Business': 'Financial markets, economy, companies, and business news',
+      'Technology': 'Tech news, gadgets, innovation, and digital trends',
+      'Sport': 'Sports news, scores, fixtures, and analysis',
+      'Health': 'Health news, medical breakthroughs, and wellness advice',
+      'Entertainment': 'Celebrity news, movies, music, and entertainment updates',
+      'Politics': 'Political news, government policies, and election coverage',
+    };
+    return descriptions[cat] || `Latest ${cat} news and updates`;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="max-w-[1280px] mx-auto px-4 py-20">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-red-600"></div>
+            <p className="text-xl font-medium text-gray-700">Loading {category} news...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (newsList.length === 0) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="max-w-[1280px] mx-auto px-4 py-20">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">{category}</h1>
+            <p className="text-xl text-gray-600">No articles available in this category</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const featuredArticle = newsList[0];
+  const topArticles = newsList.slice(1, 4);
+  const remainingArticles = newsList.slice(4);
 
   return (
-    <>
-      <Helmet>
-        {/* Primary Meta Tags */}
-        <title>{categoryTitle} - Latest Updates | World News</title>
-        <meta name="title" content={`${categoryTitle} - Latest Updates | World News`} />
-        <meta name="description" content={categoryDescription} />
-        <meta name="keywords" content={`${category.toLowerCase()} news, latest ${category.toLowerCase()}, ${category.toLowerCase()} updates, breaking ${category.toLowerCase()} news, world news ${category.toLowerCase()}`} />
-        <link rel="canonical" href={canonicalUrl} />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:title" content={`${categoryTitle} - Latest Updates | World News`} />
-        <meta property="og:description" content={categoryDescription} />
-        <meta property="og:image" content="https://worldnew.in/og-image.jpg" />
-        <meta property="og:site_name" content="World News" />
-        
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={canonicalUrl} />
-        <meta property="twitter:title" content={`${categoryTitle} - Latest Updates | World News`} />
-        <meta property="twitter:description" content={categoryDescription} />
-        <meta property="twitter:image" content="https://worldnew.in/og-image.jpg" />
-        
-        {/* Additional SEO Meta Tags */}
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-        <meta name="googlebot" content="index, follow" />
-        <meta name="bingbot" content="index, follow" />
-        <meta name="author" content="World News" />
-        <meta name="publisher" content="World News" />
-        <meta name="language" content="English" />
-        <meta name="revisit-after" content="1 day" />
-        
-        {/* Structured Data */}
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
-      </Helmet>
-      
-      <div className="flex max-w-7xl mx-auto mt-6 gap-8 px-4 lg:px-6">
-        <Sidebar />
-        <main className="flex-1 w-full lg:w-auto">
-          {/* Breadcrumb Navigation */}
-          <nav className="mb-4 text-sm" aria-label="Breadcrumb">
-            <ol className="flex items-center space-x-2 text-gray-500">
-              <li>
-                <a href="/" className="hover:text-blue-600 transition-colors">
-                  Home
-                </a>
-              </li>
-              <li className="flex items-center">
-                <span className="mx-2">/</span>
-                <span className="text-gray-700 font-medium">{categoryTitle}</span>
-              </li>
-            </ol>
+    <div className="min-h-screen bg-white">
+      {/* Category Header */}
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white">
+        <div className="max-w-[1280px] mx-auto px-4 py-8">
+          <nav className="flex items-center gap-2 text-sm mb-4 text-gray-300">
+            <a href="/" className="hover:text-white transition-colors">Home</a>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-white font-medium">{category}</span>
           </nav>
-          
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2">
-            <div className="flex items-center space-x-3">
-              <Icon className={`h-6 w-6 sm:h-8 sm:w-8 ${colorClass}`} />
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">{categoryTitle}</h1>
-            </div>
-            <div className="text-xs sm:text-sm text-gray-500">
-              Updated {new Date().toLocaleTimeString()}
-            </div>
-          </div>
-          
-          {/* Category Description */}
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500">
-            <p className="text-gray-700 leading-relaxed">{categoryDescription}</p>
-            {newsList.length > 0 && (
-              <p className="text-sm text-gray-600 mt-2">
-                Showing {newsList.length} latest {category.toLowerCase()} articles
-              </p>
-            )}
-          </div>
-          
-          <div className="mb-6">
-            <SimpleAd />
-          </div>
-          
-          {renderNewsWithAds()}
-          
-          <div className="mt-8">
-            <SimpleAd />
-          </div>
-        </main>
+          <h1 className="text-5xl font-bold mb-3">{category}</h1>
+          <p className="text-xl text-gray-300">{getCategoryDescription(category)}</p>
+        </div>
       </div>
-    </>
+
+      {/* Toolbar */}
+      <div className="border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
+        <div className="max-w-[1280px] mx-auto px-4">
+          <div className="flex items-center justify-between py-4">
+            <div className="flex items-center gap-4">
+              <span className="text-sm font-medium text-gray-700">
+                {newsList.length} articles
+              </span>
+              <div className="h-4 w-px bg-gray-300"></div>
+              <button
+                onClick={() => setSortBy('latest')}
+                className={`text-sm font-medium px-3 py-1 rounded transition-colors ${
+                  sortBy === 'latest'
+                    ? 'bg-red-600 text-white'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Clock className="h-4 w-4 inline mr-1" />
+                Latest
+              </button>
+              <button
+                onClick={() => setSortBy('popular')}
+                className={`text-sm font-medium px-3 py-1 rounded transition-colors ${
+                  sortBy === 'popular'
+                    ? 'bg-red-600 text-white'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <TrendingUp className="h-4 w-4 inline mr-1" />
+                Popular
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded transition-colors ${
+                  viewMode === 'grid'
+                    ? 'bg-gray-200 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+                aria-label="Grid view"
+              >
+                <Grid className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 rounded transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-gray-200 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+                aria-label="List view"
+              >
+                <List className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-[1280px] mx-auto px-4 py-8">
+        {/* Featured Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12 pb-8 border-b border-gray-200">
+          {/* Main Featured Article */}
+          <div className="lg:col-span-2">
+            <article className="group cursor-pointer">
+              <div className="relative overflow-hidden bg-black mb-4">
+                <img
+                  src={getImageUrl(featuredArticle.image)}
+                  alt={featuredArticle.title}
+                  className="w-full h-[450px] object-cover group-hover:opacity-90 transition-opacity"
+                />
+                {featuredArticle.featured && (
+                  <span className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase">
+                    Featured
+                  </span>
+                )}
+              </div>
+              <div className="space-y-3">
+                <h2 className="text-4xl font-bold text-gray-900 leading-tight group-hover:text-red-600 transition-colors">
+                  {featuredArticle.title}
+                </h2>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  {featuredArticle.description}
+                </p>
+                <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <span className="font-medium">{formatDate(featuredArticle.createdAt)}</span>
+                  {featuredArticle.views > 0 && (
+                    <span>{featuredArticle.views.toLocaleString()} views</span>
+                  )}
+                </div>
+              </div>
+            </article>
+          </div>
+
+          {/* Top 3 Articles Sidebar */}
+          <div className="space-y-6">
+            {topArticles.map((news) => (
+              <article key={news._id} className="group cursor-pointer pb-6 border-b border-gray-200 last:border-0">
+                <div className="flex gap-4">
+                  <div className="w-32 h-24 flex-shrink-0 overflow-hidden bg-gray-100">
+                    <img
+                      src={getImageUrl(news.image)}
+                      alt={news.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-bold text-gray-900 line-clamp-3 group-hover:text-red-600 transition-colors">
+                      {news.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        {/* Remaining Articles - Grid or List View */}
+        {viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {remainingArticles.map((news) => (
+              <article key={news._id} className="group cursor-pointer">
+                <div className="relative overflow-hidden bg-gray-100 mb-3">
+                  <img
+                    src={getImageUrl(news.image)}
+                    alt={news.title}
+                    className="w-full h-52 object-cover group-hover:scale-105 transition-transform"
+                  />
+                  {news.trending && (
+                    <span className="absolute top-3 right-3 bg-yellow-500 text-gray-900 px-2 py-1 text-xs font-bold uppercase flex items-center gap-1">
+                      <TrendingUp className="h-3 w-3" />
+                      Trending
+                    </span>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-red-600 transition-colors">
+                    {news.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 line-clamp-2">
+                    {news.description}
+                  </p>
+                  <div className="flex items-center gap-3 text-xs text-gray-500">
+                    <span>{formatDate(news.createdAt)}</span>
+                    {news.views > 0 && (
+                      <>
+                        <span>•</span>
+                        <span>{news.views.toLocaleString()} views</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {remainingArticles.map((news) => (
+              <article key={news._id} className="group cursor-pointer flex gap-6 pb-6 border-b border-gray-200">
+                <div className="w-72 h-48 flex-shrink-0 overflow-hidden bg-gray-100">
+                  <img
+                    src={getImageUrl(news.image)}
+                    alt={news.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  />
+                </div>
+                <div className="flex-1 min-w-0 space-y-3">
+                  <h3 className="text-2xl font-bold text-gray-900 line-clamp-2 group-hover:text-red-600 transition-colors">
+                    {news.title}
+                  </h3>
+                  <p className="text-base text-gray-700 line-clamp-3">
+                    {news.description}
+                  </p>
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <span className="font-medium">{formatDate(news.createdAt)}</span>
+                    {news.views > 0 && (
+                      <>
+                        <span>•</span>
+                        <span>{news.views.toLocaleString()} views</span>
+                      </>
+                    )}
+                    {news.trending && (
+                      <>
+                        <span>•</span>
+                        <span className="flex items-center gap-1 text-yellow-600 font-medium">
+                          <TrendingUp className="h-4 w-4" />
+                          Trending
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {/* Load More Button */}
+        {remainingArticles.length > 0 && (
+          <div className="text-center mt-12">
+            <button className="inline-flex items-center gap-2 px-8 py-3 bg-red-600 text-white font-bold hover:bg-red-700 transition-colors rounded">
+              <span>Load More Articles</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

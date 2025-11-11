@@ -75,19 +75,19 @@
   }
   
   .prose h1 {
-    @apply text-3xl font-bold mb-4 text-foreground;
+    @apply text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 text-foreground;
   }
   
   .prose h2 {
-    @apply text-2xl font-semibold mb-3 text-foreground;
+    @apply text-2xl sm:text-3xl font-semibold mb-3 text-foreground;
   }
   
   .prose h3 {
-    @apply text-xl font-medium mb-2 text-foreground;
+    @apply text-xl sm:text-2xl font-medium mb-2 text-foreground;
   }
   
   .prose p {
-    @apply mb-4 leading-relaxed text-foreground;
+    @apply mb-4 leading-relaxed text-foreground text-base md:text-lg;
   }
   
   .prose a {
@@ -142,8 +142,15 @@
   }
   
   .animate-marquee {
-    animation: marquee 20s linear infinite;
+    animation: marquee 18s linear infinite;
   }
+
+  /* Hide default scrollbar for overflowed nav on desktop */
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Nav link active underline */
+  .nav-active { border-bottom: 2px solid rgba(239,68,68,1); color: rgb(239,68,68); }
   
   /* Hover Effects */
   .hover-lift {
