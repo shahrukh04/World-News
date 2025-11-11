@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Clock, Share2, Facebook, Twitter, Linkedin, Mail, Bookmark, Eye, ThumbsUp, MessageCircle, ChevronRight, TrendingUp } from 'lucide-react';
 
 // API Types
@@ -23,11 +24,10 @@ interface INews {
   readingTime?: number;
 }
 
-interface NewsDetailProps {
-  newsId: string;
-}
-
-const NewsDetailPage: React.FC<NewsDetailProps> = ({ newsId }) => {
+const NewsDetailPage: React.FC = () => {
+  const params = useParams();
+  // Accept either :id or :slug route param
+  const newsId = (params as any).id || (params as any).slug || '';
   const [news, setNews] = useState<INews | null>(null);
   const [relatedNews, setRelatedNews] = useState<INews[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,6 +46,10 @@ const NewsDetailPage: React.FC<NewsDetailProps> = ({ newsId }) => {
       setLoading(true);
       try {
         // Fetch main article
+        if (!newsId) {
+          setNews(null);
+          return;
+        }
         const response = await fetch(`/api/news/${newsId}`);
         const data = await response.json();
         setNews(data);

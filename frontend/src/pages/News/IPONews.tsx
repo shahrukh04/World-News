@@ -231,8 +231,7 @@ const IPONews = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                   </div>
-                  <div className
-                  className="flex-1">
+                  <div className="flex-1">
                     <h4 className="text-sm font-bold text-gray-900 line-clamp-2 group-hover:text-green-600 transition-colors">
                       {news.title}
                     </h4>
@@ -300,7 +299,7 @@ const IPONews = () => {
       </div>
 
       {/* Marquee Animation */}
-      <style jsx>{`
+      <style>{`
         @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
