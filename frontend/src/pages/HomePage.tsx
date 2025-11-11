@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Clock, AlertCircle, TrendingUp, Globe, ArrowRight } from 'lucide-react';
+import AdSenseSlot from '../components/AdSenseSlot';
 
 // API Types
 interface INews {
@@ -193,6 +194,16 @@ const Home = () => {
         </div>
 
         {/* Secondary Grid Section */}
+        {/* AdSense - homepage fluid ad (placed between hero and secondary grid) */}
+        <div className="py-6">
+          <AdSenseSlot
+            client="ca-pub-4811298709706693"
+            slot="8792044648"
+            adFormat="fluid"
+            adLayoutKey="-gu-1e+1q-60+es"
+            className="mx-auto max-w-screen-lg"
+          />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-8 border-b border-gray-200">
           {secondaryArticles.map((news) => (
             <article key={news._id} className="group cursor-pointer">
