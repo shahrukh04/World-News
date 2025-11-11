@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import SEO from '../components/SEO'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -308,54 +309,17 @@ const PostPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{post.seo.metaTitle || post.title}</title>
-        <meta name="description" content={post.seo.metaDescription || post.excerpt} />
-        {post.seo.focusKeyword && <meta name="keywords" content={post.seo.focusKeyword} />}
-        <link rel="canonical" href={post.seo.canonicalUrl} />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.excerpt} />
-        <meta property="og:image" content={post.featuredImage} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:type" content="article" />
-        
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={post.title} />
-        <meta name="twitter:description" content={post.excerpt} />
-        <meta name="twitter:image" content={post.featuredImage} />
-        
-        {/* Article structured data */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            "headline": post.title,
-            "description": post.excerpt,
-            "image": post.featuredImage,
-            "author": {
-              "@type": "Person",
-              "name": `${post.author.firstName} ${post.author.lastName}`
-            },
-            "publisher": {
-              "@type": "Organization",
-              "name": "Blog Platform",
-              "logo": {
-                "@type": "ImageObject",
-                "url": "/logo.png"
-              }
-            },
-            "datePublished": post.publishedAt,
-            "dateModified": post.updatedAt,
-            "mainEntityOfPage": {
-              "@type": "WebPage",
-              "@id": window.location.href
-            }
-          })}
-        </script>
-      </Helmet>
+      {post && (
+        <SEO
+          title={post.seo?.metaTitle || post.title}
+          description={post.seo?.metaDescription || post.excerpt}
+          canonical={post.seo?.canonicalUrl || (post.slug ? `${window.location.origin}/post/${post.slug}` : undefined)}
+          image={post.featuredImage}
+          publishedTime={post.publishedAt}
+          modifiedTime={post.updatedAt}
+          authorName={post.author?.firstName ? `${post.author.firstName} ${post.author.lastName || ''}` : (post.author?.username || undefined)}
+        />
+      )}
 
       <div className="min-h-screen">
         {/* Google AdSense - Top of Content */}

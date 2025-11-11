@@ -8,6 +8,7 @@
     "dev:local": "vite --mode development --env-file .env.local",
     "dev:prod": "vite --mode development --env-file .env.production",
     "build": "tsc && vite build --mode production",
+  "postbuild": "node scripts/generate-sitemap.mjs",
     "build:local": "tsc && vite build --mode development",
     "build:prod": "tsc && vite build --mode production",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",

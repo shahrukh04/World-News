@@ -1,5 +1,17 @@
 import News from '../models/newsModel.js';
 
+// Helper: trigger a rebuild/deploy webhook (non-blocking)
+const triggerRebuildWebhook = async () => {
+  try {
+    const hook = process.env.SITEMAP_REBUILD_HOOK;
+    if (!hook) return;
+    // Use global fetch (Node 18+). Fire-and-forget.
+    fetch(hook, { method: 'POST' }).catch(err => console.warn('Rebuild webhook error:', err.message));
+  } catch (e) {
+    console.warn('Error triggering rebuild webhook:', e.message || e);
+  }
+};
+
 // Create news (admin only)
 export const createNews = async (req, res) => {
   const { 
@@ -58,8 +70,10 @@ export const createNews = async (req, res) => {
       trending: trending || false
     });
 
-    const createdNews = await news.save();
-    res.status(201).json(createdNews);
+  const createdNews = await news.save();
+  // trigger rebuild webhook (non-blocking)
+  triggerRebuildWebhook();
+  res.status(201).json(createdNews);
   } catch (error) {
     console.error('Error creating news:', error);
     res.status(400).json({ 
@@ -143,8 +157,10 @@ export const deleteNews = async (req, res) => {
     const news = await News.findById(req.params.id);
 
     if (news) {
-      await news.remove();
-      res.json({ message: 'News removed' });
+  await news.remove();
+  // trigger rebuild webhook (non-blocking)
+  triggerRebuildWebhook();
+  res.json({ message: 'News removed' });
     } else {
       res.status(404).json({ message: 'News not found' });
     }
@@ -216,8 +232,10 @@ export const updateNews = async (req, res) => {
       news.image = req.file.filename;
     }
 
-    const updatedNews = await news.save();
-    res.json(updatedNews);
+  const updatedNews = await news.save();
+  // trigger rebuild webhook (non-blocking)
+  triggerRebuildWebhook();
+  res.json(updatedNews);
   } catch (error) {
     console.error('Error updating news:', error);
     res.status(400).json({ 
