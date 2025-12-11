@@ -134,7 +134,7 @@ const Home = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border-b border-gray-200 py-6">
           {/* Main Hero Article - Takes 2 columns */}
           <div className="lg:col-span-2 lg:border-r border-gray-200 lg:pr-6">
-            <article className="group cursor-pointer">
+            <a href={`/news/${heroArticle.slug || heroArticle._id}`} className="group cursor-pointer block">
               <div className="relative overflow-hidden bg-black mb-4">
                 <img
                   src={getImageUrl(heroArticle.image)}
@@ -162,13 +162,13 @@ const Home = () => {
                   )}
                 </div>
               </div>
-            </article>
+            </a>
           </div>
 
           {/* Side Featured Articles */}
           <div className="lg:pl-6 space-y-6 mt-6 lg:mt-0">
             {featuredArticles.map((news) => (
-              <article key={news._id} className="group cursor-pointer pb-6 border-b border-gray-200 last:border-0">
+              <a href={`/news/${news.slug || news._id}`} key={news._id} className="group cursor-pointer pb-6 border-b border-gray-200 last:border-0 block">
                 <div className="flex gap-4">
                   <div className="w-32 h-24 flex-shrink-0 overflow-hidden bg-gray-100">
                     <img
@@ -185,7 +185,7 @@ const Home = () => {
                     <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
                   </div>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
         </div>
@@ -203,7 +203,7 @@ const Home = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-8 border-b border-gray-200">
           {secondaryArticles.map((news) => (
-            <article key={news._id} className="group cursor-pointer">
+            <a href={`/news/${news.slug || news._id}`} key={news._id} className="group cursor-pointer block">
               <div className="relative overflow-hidden bg-gray-100 mb-3">
                 <img
                   src={getImageUrl(news.image)}
@@ -219,7 +219,7 @@ const Home = () => {
                 {news.description}
               </p>
               <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
-            </article>
+            </a>
           ))}
         </div>
 
@@ -232,7 +232,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestNews.map((news) => (
-              <article key={news._id} className="group cursor-pointer border-b border-gray-200 pb-6">
+              <a href={`/news/${news.slug || news._id}`} key={news._id} className="group cursor-pointer border-b border-gray-200 pb-6 block">
                 <div className="flex gap-4">
                   <div className="w-28 h-20 flex-shrink-0 overflow-hidden bg-gray-100">
                     <img
@@ -249,7 +249,7 @@ const Home = () => {
                     <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
                   </div>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
 

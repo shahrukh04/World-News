@@ -16,8 +16,8 @@ class NewsScheduler {
       return;
     }
 
-    // Run every day at 9:30 PM
-    cron.schedule('30 21 * * *', async () => {
+    // Run daily at 6:00 AM IST (00:30 UTC)
+    cron.schedule('30 0 * * *', async () => {
       console.log('Starting daily news fetch...');
       await this.fetchAndCreateDailyNews();
     });
@@ -26,7 +26,7 @@ class NewsScheduler {
     // this.fetchAndCreateDailyNews();
 
     this.isRunning = true;
-    console.log('News scheduler started - will run daily at 9:30 PM');
+    console.log('News scheduler started - will run daily at 6:00 AM IST');
   }
 
   async fetchAndCreateDailyNews() {
