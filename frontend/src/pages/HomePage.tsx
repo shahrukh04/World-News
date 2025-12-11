@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Clock, AlertCircle, TrendingUp, Globe, ArrowRight } from 'lucide-react';
 import AdSenseSlot from '../components/AdSenseSlot';
+import { getImageUrl } from '../utils/imageUtils';
 
 // API Types
 interface INews {
@@ -27,11 +28,8 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Get image URL helper
-  const getImageUrl = (image?: string) => {
-    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
-    if (image.startsWith('http')) return image;
-    return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${image}`;
+  const getImageWithFallback = (image?: string) => {
+    return getImageUrl(image) || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
   };
 
   useEffect(() => {
@@ -39,7 +37,7 @@ const Home = () => {
       setLoading(true);
       try {
         // Replace with your actual API endpoint
-        const response = await fetch('/api/news?status=published&limit=50');
+        const response = await fetch('/api/news?status=published&limit=24');
         const data = await response.json();
         setNewsList(data?.news || []);
       } catch (err) {

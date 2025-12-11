@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchNews, INews, IPaginatedNews } from '../../services/api';
 import { Zap, AlertCircle, Clock, Globe, ArrowRight } from 'lucide-react';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const TechnologyNews = () => {
   const [newsList, setNewsList] = useState<INews[]>([]);
@@ -47,11 +48,8 @@ const TechnologyNews = () => {
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   };
 
-  // Get image with fallback
-  const getImageUrl = (image?: string) => {
-    if (!image) return 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80';
-    if (image.startsWith('http')) return image;
-    return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${image}`;
+  const getImageWithFallback = (image?: string) => {
+    return getImageUrl(image) || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80';
   };
 
   if (loading) {

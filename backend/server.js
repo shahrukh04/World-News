@@ -32,18 +32,24 @@ const __dirname = path.dirname(__filename);
 // CORS Configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5000', 'http://127.0.0.1:5000', 'http://localhost:3001', 'http://127.0.0.1:3001'];
+  : [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
+    'https://worldnew.in',
+    'https://world-news.vercel.app'
+  ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+    if (allowedOrigins.includes('*')) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

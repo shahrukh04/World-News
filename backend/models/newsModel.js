@@ -45,6 +45,8 @@ const newsSchema = new mongoose.Schema({
   excerpt: { type: String, maxlength: 300 }
 }, { timestamps: true });
 
+newsSchema.index({ status: 1, category: 1, createdAt: -1 });
+
 // Auto-generate slug before saving
 newsSchema.pre('save', function(next) {
   if (this.isModified('title')) {

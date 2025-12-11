@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Clock, Share2, Facebook, Twitter, Linkedin, Mail, Bookmark, Eye, ThumbsUp, MessageCircle, ChevronRight, TrendingUp } from 'lucide-react';
+import { getImageUrl } from '../../utils/imageUtils';
 
 // API Types
 interface INews {
@@ -34,11 +35,8 @@ const NewsDetailPage: React.FC = () => {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  // Get image URL helper
-  const getImageUrl = (image?: string) => {
-    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80';
-    if (image.startsWith('http')) return image;
-    return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${image}`;
+  const getImageWithFallback = (image?: string) => {
+    return getImageUrl(image) || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80';
   };
 
   useEffect(() => {
@@ -281,6 +279,7 @@ const NewsDetailPage: React.FC = () => {
               src={getImageUrl(news.image)}
               alt={news.title}
               className="w-full h-auto rounded-lg"
+              loading="lazy"
             />
             <figcaption className="text-sm text-gray-500 mt-3 italic">
               {news.title}
@@ -356,6 +355,7 @@ const NewsDetailPage: React.FC = () => {
                         src={getImageUrl(related.image)}
                         alt={related.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        loading="lazy"
                       />
                     </div>
                     <div className="p-5">

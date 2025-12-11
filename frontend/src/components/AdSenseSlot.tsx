@@ -8,6 +8,8 @@ interface AdSenseSlotProps {
   adFormat?: string; // e.g., 'fluid'
   adLayoutKey?: string; // e.g., '-gu-1e+1q-60+es'
   forceShow?: boolean;
+  /** reserved height in px while ad loads (defaults to 140 for fluid) */
+  reserveHeight?: number;
 }
 
 const ensureScript = (client: string) => {
@@ -28,9 +30,11 @@ const AdSenseSlot: React.FC<AdSenseSlotProps> = ({
   className = '',
   adFormat = 'fluid',
   adLayoutKey,
-  forceShow = false
+  forceShow = false,
+  reserveHeight
 }) => {
   const insRef = useRef<HTMLDivElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -68,11 +72,45 @@ const AdSenseSlot: React.FC<AdSenseSlotProps> = ({
     // Try immediately and also after a short delay to allow script to load
     tryPush();
     const t = setTimeout(tryPush, 1500);
-    return () => clearTimeout(t);
+
+    // If the ad network doesn't render an iframe within a few seconds, hide the container
+    const checkRendered = () => {
+      try {
+        if (!insRef.current || !wrapperRef.current) return true;
+        // Look for an iframe (AdSense inserts an iframe) or non-empty content
+        const hasIframe = !!insRef.current.querySelector('iframe');
+        const hasContent = insRef.current.innerHTML.trim().length > 0;
+        if (hasIframe || hasContent) {
+          // Ad rendered (or some content present) - remove reserved height and keep visible
+          wrapperRef.current.style.display = '';
+          wrapperRef.current.style.minHeight = '';
+          return true;
+        }
+        // No ad - hide wrapper to avoid blank whitespace
+        wrapperRef.current.style.display = 'none';
+        return false;
+      } catch (e) {
+        return false;
+      }
+    };
+
+    const checkTimer = setTimeout(checkRendered, 7000);
+
+    return () => {
+      clearTimeout(t);
+      clearTimeout(checkTimer);
+    };
   }, [client, slot, adFormat, adLayoutKey, forceShow]);
 
+  // Reserve reasonable vertical space for fluid ads while loading to avoid layout shift
+  const reserve = reserveHeight ?? (adFormat === 'fluid' ? 140 : 0);
+  const defaultStyle: React.CSSProperties = {
+    minHeight: reserve,
+    ...style
+  };
+
   return (
-    <div className={`w-full ${className}`} style={style}>
+    <div ref={wrapperRef} className={`w-full ${className}`} style={defaultStyle}>
       <div ref={insRef} />
     </div>
   );

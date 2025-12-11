@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Clock, TrendingUp, Filter, Grid, List, ChevronRight } from 'lucide-react';
+import { getImageUrl } from '../utils/imageUtils';
 
 // API Types
 interface INews {
@@ -31,11 +32,8 @@ const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category })
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'latest' | 'popular'>('latest');
 
-  // Get image URL helper
-  const getImageUrl = (image?: string) => {
-    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
-    if (image.startsWith('http')) return image;
-    return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${image}`;
+  const getImageWithFallback = (image?: string) => {
+    return getImageUrl(image) || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
   };
 
   useEffect(() => {
@@ -43,7 +41,7 @@ const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category })
       setLoading(true);
       try {
         // Replace with your actual API endpoint
-        const response = await fetch(`/api/news?category=${category}&status=published&limit=50`);
+        const response = await fetch(`/api/news?category=${category}&status=published&limit=24`);
         const data = await response.json();
         let articles = data?.news || [];
 

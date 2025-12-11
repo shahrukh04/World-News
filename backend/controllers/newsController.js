@@ -1,4 +1,5 @@
 import News from '../models/newsModel.js';
+import mongoose from 'mongoose';
 
 // Helper: trigger a rebuild/deploy webhook (non-blocking)
 const triggerRebuildWebhook = async () => {
@@ -135,7 +136,13 @@ export const getNews = async (req, res) => {
 // Get news by id
 export const getNewsById = async (req, res) => {
   try {
-    const news = await News.findById(req.params.id);
+    const idOrSlug = req.params.id;
+    let news;
+    if (mongoose.Types.ObjectId.isValid(idOrSlug)) {
+      news = await News.findById(idOrSlug);
+    } else {
+      news = await News.findOne({ slug: idOrSlug });
+    }
 
     if (news) {
       res.json(news);

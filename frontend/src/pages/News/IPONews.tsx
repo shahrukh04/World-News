@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchNews, INews, IPaginatedNews } from '../../services/api';
 import { DollarSign, AlertCircle, Clock, Globe, ArrowRight } from 'lucide-react';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const IPONews = () => {
   const [newsList, setNewsList] = useState<INews[]>([]);
@@ -47,11 +48,8 @@ const IPONews = () => {
     return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
-  // Get image with India IPO fallback
-  const getImageUrl = (image?: string) => {
-    if (!image) return 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80'; // Stock exchange
-    if (image.startsWith('http')) return image;
-    return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${image}`;
+  const getImageWithFallback = (image?: string) => {
+    return getImageUrl(image) || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80';
   };
 
   if (loading) {
