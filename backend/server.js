@@ -40,6 +40,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
     'http://localhost:3001',
     'http://127.0.0.1:3001',
     'https://worldnew.in',
+    'https://www.worldnew.in',
     'https://world-news.vercel.app'
   ];
 
@@ -118,6 +119,25 @@ if (frontendFallback) {
   frontendFallback();
 }
 
+// Robots.txt and ads.txt for SEO/AdSense
+app.get('/robots.txt', (req, res) => {
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  const robots = [
+    'User-agent: *',
+    'Allow: /',
+    `Sitemap: ${baseUrl}/sitemap.xml`
+  ].join('\n');
+  res.type('text/plain').send(robots);
+});
+
+app.get('/ads.txt', (req, res) => {
+  // Google AdSense authorized seller entry
+  const lines = [
+    'google.com, pub-4811298709706693, DIRECT, f08c47fec0942fa0'
+  ].join('\n');
+  res.type('text/plain').send(lines);
+});
+
 // Error middleware
 app.use(notFound);
 app.use(errorHandler);
@@ -129,4 +149,9 @@ app.listen(PORT, () => {
   // Start the automated news scheduler
   newsScheduler.start();
   console.log('Automated news scheduler initialized');
+
+  if (process.env.SEED_ON_START === 'true') {
+    newsScheduler.triggerManualFetch();
+    console.log('Seed on start triggered');
+  }
 });

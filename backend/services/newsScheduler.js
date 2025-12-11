@@ -31,11 +31,14 @@ class NewsScheduler {
 
   async fetchAndCreateDailyNews() {
     try {
-      // Get the first admin user as the author
-      const adminUser = await User.findOne().select('_id');
+      const defaultUsername = process.env.SYSTEM_AUTHOR_USERNAME || 'system';
+      let adminUser = await User.findOne({ username: defaultUsername }).select('_id');
       if (!adminUser) {
-        console.error('No admin user found for automated news posting');
-        return;
+        const password = process.env.SYSTEM_AUTHOR_PASSWORD || `${Math.random().toString(36).slice(2)}!${Date.now()}`;
+        const systemUser = new User({ username: defaultUsername, password });
+        await systemUser.save();
+        adminUser = { _id: systemUser._id };
+        console.log('Created system author for automated news posting');
       }
 
       console.log('Fetching trending news for all categories...');

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Clock, AlertCircle, TrendingUp, Globe, ArrowRight } from 'lucide-react';
 import AdSenseSlot from '../components/AdSenseSlot';
 import { getImageUrl } from '../utils/imageUtils';
+import { fetchNews, IPaginatedNews } from '../services/api';
 
 // API Types
 interface INews {
@@ -36,10 +37,8 @@ const Home = () => {
     const loadNews = async () => {
       setLoading(true);
       try {
-        // Replace with your actual API endpoint
-        const response = await fetch('/api/news?status=published&limit=24');
-        const data = await response.json();
-        setNewsList(data?.news || []);
+        const result: IPaginatedNews = await fetchNews(undefined, 'published', 1, 24);
+        setNewsList(result.news || []);
       } catch (err) {
         console.error('Error loading news:', err);
         setError('Failed to load news');

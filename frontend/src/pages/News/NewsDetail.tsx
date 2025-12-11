@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Clock, Share2, Facebook, Twitter, Linkedin, Mail, Bookmark, Eye, ThumbsUp, MessageCircle, ChevronRight, TrendingUp } from 'lucide-react';
 import { getImageUrl } from '../../utils/imageUtils';
+import { fetchNews, fetchNewsById, INews as INewsApi, IPaginatedNews } from '../../services/api';
 
 // API Types
 interface INews {
@@ -48,15 +49,13 @@ const NewsDetailPage: React.FC = () => {
           setNews(null);
           return;
         }
-        const response = await fetch(`/api/news/${newsId}`);
-        const data = await response.json();
+        const data: INewsApi = await fetchNewsById(newsId);
         setNews(data);
 
         // Fetch related articles
         if (data?.category) {
-          const relatedResponse = await fetch(`/api/news?category=${data.category}&status=published&limit=4`);
-          const relatedData = await relatedResponse.json();
-          setRelatedNews(relatedData?.news?.filter((n: INews) => n._id !== newsId) || []);
+          const relatedResult: IPaginatedNews = await fetchNews(data.category, 'published', 1, 4);
+          setRelatedNews(relatedResult?.news?.filter((n: INews) => n._id !== newsId) || []);
         }
       } catch (err) {
         console.error('Error loading news:', err);

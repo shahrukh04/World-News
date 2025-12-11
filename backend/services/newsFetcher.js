@@ -251,8 +251,16 @@ class NewsFetcher {
     // Log if no articles were fetched from APIs
     if (articles.length === 0) {
       console.log(`No articles fetched from APIs for category: ${category}`);
+      const mockArticles = this.generateMockNews(category, limit);
+      articles = articles.concat(mockArticles);
     } else {
       console.log(`Successfully fetched ${articles.length} articles for category: ${category}`);
+    }
+
+    if (articles.length < limit) {
+      const remaining = limit - articles.length;
+      const mockTopUp = this.generateMockNews(category, remaining);
+      articles = articles.concat(mockTopUp);
     }
 
     // Ensure we don't exceed the limit
