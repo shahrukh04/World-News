@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Clock, AlertCircle, TrendingUp, Globe, ArrowRight } from 'lucide-react';
-import AdSenseSlot from '../components/AdSenseSlot';
-import { getImageUrl } from '../utils/imageUtils';
-import { fetchNews, IPaginatedNews } from '../services/api';
+import { AlertCircle, Globe } from 'lucide-react';
 
 // API Types
 interface INews {
@@ -11,7 +8,8 @@ interface INews {
   slug: string;
   category: string;
   description: string;
-  content: string;
+  content?: string;
+  contentChunks?: string[];
   image?: string;
   author: string;
   createdAt: string;
@@ -29,16 +27,23 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getImageWithFallback = (image?: string) => {
-    return getImageUrl(image) || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
+  // Get image URL helper
+  const getImageUrl = (image?: string) => {
+    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
+    if (image.startsWith('http')) return image;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const backendUrl = apiUrl.replace(/\/api\/?$/, '');
+    const normalizedPath = image.startsWith('/') ? image : `/${image}`;
+    return `${backendUrl}${normalizedPath}`;
   };
 
   useEffect(() => {
     const loadNews = async () => {
       setLoading(true);
       try {
-        const result: IPaginatedNews = await fetchNews(undefined, 'published', 1, 24);
-        setNewsList(result.news || []);
+        const response = await fetch('/api/news?status=published&limit=3');
+        const data = await response.json();
+        setNewsList(data?.news || []);
       } catch (err) {
         console.error('Error loading news:', err);
         setError('Failed to load news');
@@ -103,9 +108,7 @@ const Home = () => {
   }
 
   const heroArticle = newsList[0];
-  const featuredArticles = newsList.slice(1, 4);
-  const secondaryArticles = newsList.slice(4, 8);
-  const latestNews = newsList.slice(8);
+  const featuredArticles = newsList.slice(1);
 
   return (
     <div className="min-h-screen bg-white">
@@ -134,7 +137,7 @@ const Home = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border-b border-gray-200 py-6">
           {/* Main Hero Article - Takes 2 columns */}
           <div className="lg:col-span-2 lg:border-r border-gray-200 lg:pr-6">
-            <a href={`/news/${heroArticle.slug || heroArticle._id}`} className="group cursor-pointer block">
+            <a href={`/news/${heroArticle.slug || heroArticle._id}`} className="block group">
               <div className="relative overflow-hidden bg-black mb-4">
                 <img
                   src={getImageUrl(heroArticle.image)}
@@ -168,7 +171,11 @@ const Home = () => {
           {/* Side Featured Articles */}
           <div className="lg:pl-6 space-y-6 mt-6 lg:mt-0">
             {featuredArticles.map((news) => (
-              <a href={`/news/${news.slug || news._id}`} key={news._id} className="group cursor-pointer pb-6 border-b border-gray-200 last:border-0 block">
+              <a
+                key={news._id}
+                href={`/news/${news.slug || news._id}`}
+                className="block group pb-6 border-b border-gray-200 last:border-0"
+              >
                 <div className="flex gap-4">
                   <div className="w-32 h-24 flex-shrink-0 overflow-hidden bg-gray-100">
                     <img
@@ -187,78 +194,6 @@ const Home = () => {
                 </div>
               </a>
             ))}
-          </div>
-        </div>
-
-        {/* Secondary Grid Section */}
-        {/* AdSense - homepage fluid ad (placed between hero and secondary grid) */}
-        <div className="py-6">
-          <AdSenseSlot
-            client="ca-pub-4811298709706693"
-            slot="8792044648"
-            adFormat="fluid"
-            adLayoutKey="-gu-1e+1q-60+es"
-            className="mx-auto max-w-screen-lg"
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-8 border-b border-gray-200">
-          {secondaryArticles.map((news) => (
-            <a href={`/news/${news.slug || news._id}`} key={news._id} className="group cursor-pointer block">
-              <div className="relative overflow-hidden bg-gray-100 mb-3">
-                <img
-                  src={getImageUrl(news.image)}
-                  alt={news.title}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform"
-                />
-              </div>
-              <span className="text-xs font-bold text-gray-600 uppercase">{news.category}</span>
-              <h3 className="text-lg font-bold text-gray-900 mt-2 line-clamp-2 group-hover:text-red-600 transition-colors">
-                {news.title}
-              </h3>
-              <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                {news.description}
-              </p>
-              <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
-            </a>
-          ))}
-        </div>
-
-        {/* Latest News - List View */}
-        <div className="py-8">
-          <div className="flex items-center gap-3 mb-6">
-            <TrendingUp className="h-6 w-6 text-red-600" />
-            <h2 className="text-3xl font-bold text-gray-900">Latest News</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {latestNews.map((news) => (
-              <a href={`/news/${news.slug || news._id}`} key={news._id} className="group cursor-pointer border-b border-gray-200 pb-6 block">
-                <div className="flex gap-4">
-                  <div className="w-28 h-20 flex-shrink-0 overflow-hidden bg-gray-100">
-                    <img
-                      src={getImageUrl(news.image)}
-                      alt={news.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-xs font-bold text-gray-600 uppercase">{news.category}</span>
-                    <h4 className="text-sm font-bold text-gray-900 mt-1 line-clamp-3 group-hover:text-red-600 transition-colors">
-                      {news.title}
-                    </h4>
-                    <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          {/* Load More Button */}
-          <div className="text-center mt-8">
-            <button className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-bold hover:bg-red-700 transition-colors">
-              <span>More News</span>
-              <ArrowRight className="h-4 w-4" />
-            </button>
           </div>
         </div>
       </div>

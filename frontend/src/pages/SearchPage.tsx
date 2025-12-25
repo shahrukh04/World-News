@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Input } from '@/components/ui/Input'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { formatDate, generateExcerpt, readingTime } from '@/lib/utils'
-import type { Post, SearchResults } from '@/types'
+import type { SearchResults } from '@/types'
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()

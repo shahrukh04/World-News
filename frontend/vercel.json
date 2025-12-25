@@ -6,15 +6,11 @@
     },
     {
       "source": "/ads.txt",
-      "destination": "https://world-news-skvr.onrender.com/ads.txt"
+      "destination": "/ads.txt"
     },
     {
       "source": "/robots.txt",
-      "destination": "https://world-news-skvr.onrender.com/robots.txt"
-    },
-    {
-      "source": "/sitemap.xml",
-      "destination": "https://world-news-skvr.onrender.com/sitemap.xml"
+      "destination": "/robots.txt"
     },
     {
       "source": "/(.*)",
@@ -46,15 +42,6 @@
         {
           "key": "Content-Type",
           "value": "text/plain"
-        }
-      ]
-    },
-    {
-      "source": "/sitemap.xml",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/xml"
         }
       ]
     }

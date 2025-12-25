@@ -9,7 +9,7 @@ import {
 import { useThemeStore } from '@/stores/themeStore'
 
 const ThemeToggle = () => {
-  const { theme, setTheme } = useThemeStore()
+  const { setTheme } = useThemeStore()
 
   return (
     <DropdownMenu>

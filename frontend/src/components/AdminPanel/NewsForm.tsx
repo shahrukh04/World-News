@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Button from '../common/Button';
 import { createNews, updateNews, analyzeSEO, INewsCreate, INews } from '../../services/api';
-import { Eye, Search, TrendingUp, Globe, FileText, Image, Tag, Calendar, BarChart3 } from 'lucide-react';
+import { Eye, Search, TrendingUp, Globe, FileText, BarChart3 } from 'lucide-react';
 
 const categories = ['India', 'World', 'Health', 'Jobs', 'Sports', 'Technology', 'IPO', 'Business', 'Entertainment', 'Other'];
 
@@ -16,7 +16,7 @@ const NewsForm: React.FC<NewsFormProps> = ({ editNews, onSuccess }) => {
   const [title, setTitle] = useState(editNews?.title || '');
   const [category, setCategory] = useState(editNews?.category || 'India');
   const [description, setDescription] = useState(editNews?.description || '');
-  const [content, setContent] = useState(editNews?.content || '');
+  const [content, setContent] = useState(editNews?.content || editNews?.contentChunks?.join('') || '');
   const [excerpt, setExcerpt] = useState(editNews?.excerpt || '');
   const [image, setImage] = useState<File | null>(null);
   
@@ -46,6 +46,55 @@ const NewsForm: React.FC<NewsFormProps> = ({ editNews, onSuccess }) => {
   const [seoAnalysis, setSeoAnalysis] = useState<any>(null);
   const [keywordInput, setKeywordInput] = useState('');
   const [tagInput, setTagInput] = useState('');
+
+  useEffect(() => {
+    if (!editNews) {
+      setTitle('');
+      setCategory('India');
+      setDescription('');
+      setContent('');
+      setExcerpt('');
+      setImage(null);
+      setMetaTitle('');
+      setMetaDescription('');
+      setKeywords([]);
+      setFocusKeyword('');
+      setCanonicalUrl('');
+      setOgTitle('');
+      setOgDescription('');
+      setTwitterTitle('');
+      setTwitterDescription('');
+      setTags([]);
+      setStatus('draft');
+      setFeatured(false);
+      setTrending(false);
+      setMessage(null);
+      setSeoAnalysis(null);
+      setActiveTab('basic');
+      return;
+    }
+
+    setTitle(editNews.title || '');
+    setCategory(editNews.category || 'India');
+    setDescription(editNews.description || '');
+    setContent(editNews.content || editNews.contentChunks?.join('') || '');
+    setExcerpt(editNews.excerpt || '');
+    setImage(null);
+    setMetaTitle(editNews.metaTitle || '');
+    setMetaDescription(editNews.metaDescription || '');
+    setKeywords(editNews.keywords || []);
+    setFocusKeyword(editNews.focusKeyword || '');
+    setCanonicalUrl(editNews.canonicalUrl || '');
+    setOgTitle(editNews.ogTitle || '');
+    setOgDescription(editNews.ogDescription || '');
+    setTwitterTitle(editNews.twitterTitle || '');
+    setTwitterDescription(editNews.twitterDescription || '');
+    setTags(editNews.tags || []);
+    setStatus(editNews.status || 'draft');
+    setFeatured(!!editNews.featured);
+    setTrending(!!editNews.trending);
+    setMessage(null);
+  }, [editNews]);
 
   // Auto-generate SEO fields
   useEffect(() => {

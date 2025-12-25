@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchNews, INews, IPaginatedNews } from '../../services/api';
-import { Zap, AlertCircle, Clock, Globe, ArrowRight } from 'lucide-react';
-import { getImageUrl } from '../../utils/imageUtils';
+import { Zap, AlertCircle, Clock, Globe } from 'lucide-react';
 
 const TechnologyNews = () => {
   const [newsList, setNewsList] = useState<INews[]>([]);
@@ -48,8 +47,14 @@ const TechnologyNews = () => {
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   };
 
-  const getImageWithFallback = (image?: string) => {
-    return getImageUrl(image) || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80';
+  // Get image with fallback
+  const getImageUrl = (image?: string) => {
+    if (!image) return 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80';
+    if (image.startsWith('http')) return image;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const backendUrl = apiUrl.replace(/\/api\/?$/, '');
+    const normalizedPath = image.startsWith('/') ? image : `/${image}`;
+    return `${backendUrl}${normalizedPath}`;
   };
 
   if (loading) {
@@ -124,7 +129,7 @@ const TechnologyNews = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border-b border-gray-200 pb-8 mb-8">
           {/* Main Hero */}
           <div className="lg:col-span-2 lg:border-r border-gray-200 lg:pr-6">
-            <article className="group cursor-pointer">
+            <a href={`/news/${heroArticle.slug || heroArticle._id}`} className="block group">
               <div className="relative overflow-hidden bg-black mb-4">
                 <img
                   src={getImageUrl(heroArticle.image)}
@@ -140,7 +145,7 @@ const TechnologyNews = () => {
                   {heroArticle.title}
                 </h1>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  {heroArticle.description || heroArticle.content.substring(0, 180) + '...'}
+                  {heroArticle.description}
                 </p>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span>{formatDate(heroArticle.createdAt)}</span>
@@ -152,13 +157,17 @@ const TechnologyNews = () => {
                   )}
                 </div>
               </div>
-            </article>
+            </a>
           </div>
 
           {/* Side Featured */}
           <div className="lg:pl-6 space-y-6 mt-6 lg:mt-0">
             {featuredArticles.map((news) => (
-              <article key={news._id} className="group cursor-pointer pb-6 border-b border-gray-200 last:border-0">
+              <a
+                key={news._id}
+                href={`/news/${news.slug || news._id}`}
+                className="block group pb-6 border-b border-gray-200 last:border-0"
+              >
                 <div className="flex gap-4">
                   <div className="w-32 h-24 flex-shrink-0 overflow-hidden bg-gray-100">
                     <img
@@ -174,7 +183,7 @@ const TechnologyNews = () => {
                     <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
                   </div>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
         </div>
@@ -182,7 +191,7 @@ const TechnologyNews = () => {
         {/* Grid Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-8 border-b border-gray-200">
           {gridArticles.map((news) => (
-            <article key={news._id} className="group cursor-pointer">
+            <a key={news._id} href={`/news/${news.slug || news._id}`} className="block group">
               <div className="relative overflow-hidden bg-gray-100 mb-3">
                 <img
                   src={getImageUrl(news.image)}
@@ -194,10 +203,10 @@ const TechnologyNews = () => {
                 {news.title}
               </h3>
               <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                {news.description || news.content.substring(0, 100) + '...'}
+                {news.description}
               </p>
               <p className="text-xs text-gray-500 mt-2">{formatDate(news.createdAt)}</p>
-            </article>
+            </a>
           ))}
         </div>
 
@@ -211,7 +220,11 @@ const TechnologyNews = () => {
           <div className="space-y-6">
             {listArticles.map((news, index) => (
               <div key={news._id}>
-                <article className="group cursor-pointer flex gap-4 pb-6 border-b border-gray-200 last:border-0">
+                <a
+                  href={`/news/${news.slug || news._id}`}
+                  className="block group"
+                >
+                  <article className="flex gap-4 pb-6 border-b border-gray-200 last:border-0">
                   <div className="w-28 h-20 flex-shrink-0 overflow-hidden bg-gray-100">
                     <img
                       src={getImageUrl(news.image)}
@@ -225,7 +238,8 @@ const TechnologyNews = () => {
                     </h4>
                     <p className="text-xs text-gray-500 mt-1">{formatDate(news.createdAt)}</p>
                   </div>
-                </article>
+                  </article>
+                </a>
 
                 {/* Ad every 3 items */}
                 {index === 2 && (

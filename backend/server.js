@@ -8,7 +8,6 @@ import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import mainRoutes from './mainRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
-import newsScheduler from './services/newsScheduler.js';
 
 // Load environment-specific configuration
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -32,25 +31,18 @@ const __dirname = path.dirname(__filename);
 // CORS Configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://localhost:5000',
-    'http://127.0.0.1:5000',
-    'http://localhost:3001',
-    'http://127.0.0.1:3001',
-    'https://worldnew.in',
-    'https://www.worldnew.in',
-    'https://world-news.vercel.app'
-  ];
+  : ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5000', 'http://127.0.0.1:5000', 'http://localhost:3001', 'http://127.0.0.1:3001'];
 
 app.use(cors({
   origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes('*')) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    if (/\.vercel\.app$/.test(origin)) return callback(null, true);
-    callback(new Error('Not allowed by CORS'));
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -119,25 +111,6 @@ if (frontendFallback) {
   frontendFallback();
 }
 
-// Robots.txt and ads.txt for SEO/AdSense
-app.get('/robots.txt', (req, res) => {
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
-  const robots = [
-    'User-agent: *',
-    'Allow: /',
-    `Sitemap: ${baseUrl}/sitemap.xml`
-  ].join('\n');
-  res.type('text/plain').send(robots);
-});
-
-app.get('/ads.txt', (req, res) => {
-  // Google AdSense authorized seller entry
-  const lines = [
-    'google.com, pub-4811298709706693, DIRECT, f08c47fec0942fa0'
-  ].join('\n');
-  res.type('text/plain').send(lines);
-});
-
 // Error middleware
 app.use(notFound);
 app.use(errorHandler);
@@ -145,13 +118,4 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  
-  // Start the automated news scheduler
-  newsScheduler.start();
-  console.log('Automated news scheduler initialized');
-
-  if (process.env.SEED_ON_START === 'true') {
-    newsScheduler.triggerManualFetch();
-    console.log('Seed on start triggered');
-  }
 });

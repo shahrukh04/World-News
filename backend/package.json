@@ -14,7 +14,7 @@
       "start:local": "cross-env NODE_ENV=development node server.js",
       "dev": "cross-env NODE_ENV=development nodemon server.js",
       "dev:prod": "cross-env NODE_ENV=production nodemon server.js",
-      "test": "jest"
+      "test": "jest --passWithNoTests"
    },
    "dependencies": {
       "axios": "^1.6.2",

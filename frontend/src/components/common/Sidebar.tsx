@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Globe, MapPin, Heart, Briefcase, TrendingUp, Zap, Clock, Flame } from 'lucide-react';
-import SimpleAd from '../SimpleAd';
 
 const categories = [
   { name: 'World', icon: Globe, color: 'text-blue-600' },
@@ -80,12 +79,6 @@ const Sidebar = () => {
             #SportsHighlights
           </div>
         </div>
-      </div>
-      
-      {/* Sidebar Ad */}
-      <div className="p-4 border-t border-gray-200">
-        <h3 className="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wide">Advertisement</h3>
-        <SimpleAd className="w-full" />
       </div>
     </aside>
   );

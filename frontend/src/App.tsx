@@ -13,7 +13,6 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import AdminDashboard from './pages/AdminPanel/AdminDashboard';
 import UserManagement from './pages/AdminPanel/UserManagement';
-import NewsScheduler from './components/AdminPanel/NewsScheduler';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import MainLayout from './components/layout/MainLayout';
 import About from './pages/About';
@@ -62,14 +61,6 @@ const App = () => {
           element={
             <ProtectedRoute>
               <UserManagement />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/scheduler"
-          element={
-            <ProtectedRoute>
-              <NewsScheduler />
             </ProtectedRoute>
           }
         />

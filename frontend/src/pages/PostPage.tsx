@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
 import SEO from '../components/SEO'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
-import { formatDate, generateExcerpt, readingTime } from '@/lib/utils'
-import type { Post, Category, Tag } from '@/types'
-import SimpleAd from '../components/SimpleAd'
+import { formatDate } from '@/lib/utils'
+import type { Post } from '@/types'
 
 // Move the long HTML string to a separate variable OUTSIDE the component
 const mockContent = `
@@ -322,13 +320,6 @@ const PostPage = () => {
       )}
 
       <div className="min-h-screen">
-        {/* Google AdSense - Top of Content */}
-        {post.settings.adSenseEnabled && (
-          <div className="container mx-auto px-4 py-4">
-            <SimpleAd className="w-full" />
-          </div>
-        )}
-
         <article className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="mb-6">
@@ -415,13 +406,6 @@ const PostPage = () => {
               <div dangerouslySetInnerHTML={{ __html: post.content }} />
             </div>
 
-            {/* Google AdSense - Middle of Content */}
-            {post.settings.adSenseEnabled && (
-              <div className="my-8">
-                <SimpleAd className="w-full" />
-              </div>
-            )}
-
             {/* Article Footer */}
             <footer className="mt-12 pt-8 border-t">
               <div className="flex flex-wrap items-center justify-between gap-4">
@@ -494,12 +478,6 @@ const PostPage = () => {
           </section>
         )}
 
-        {/* Google AdSense - Bottom of Content */}
-        {post.settings.adSenseEnabled && (
-          <div className="container mx-auto px-4 py-4">
-            <SimpleAd className="w-full" />
-          </div>
-        )}
       </div>
     </>
   )

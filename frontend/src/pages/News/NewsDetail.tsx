@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Clock, Share2, Facebook, Twitter, Linkedin, Mail, Bookmark, Eye, ThumbsUp, MessageCircle, ChevronRight, TrendingUp } from 'lucide-react';
-import { getImageUrl } from '../../utils/imageUtils';
-import { fetchNews, fetchNewsById, INews as INewsApi, IPaginatedNews } from '../../services/api';
+import { Clock, Share2, Facebook, Twitter, Linkedin, Mail, Bookmark, Eye, ThumbsUp, ChevronRight, TrendingUp } from 'lucide-react';
 
 // API Types
 interface INews {
@@ -11,7 +9,8 @@ interface INews {
   slug: string;
   category: string;
   description: string;
-  content: string;
+  content?: string;
+  contentChunks?: string[];
   image?: string;
   author: string;
   createdAt: string;
@@ -27,17 +26,22 @@ interface INews {
 }
 
 const NewsDetailPage: React.FC = () => {
-  const params = useParams();
-  // Accept either :id or :slug route param
-  const newsId = (params as any).id || (params as any).slug || '';
+  const { id, slug } = useParams<'id' | 'slug'>();
+  const newsId = id || slug || '';
   const [news, setNews] = useState<INews | null>(null);
   const [relatedNews, setRelatedNews] = useState<INews[]>([]);
   const [loading, setLoading] = useState(true);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  const getImageWithFallback = (image?: string) => {
-    return getImageUrl(image) || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80';
+  // Get image URL helper
+  const getImageUrl = (image?: string) => {
+    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80';
+    if (image.startsWith('http')) return image;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const backendUrl = apiUrl.replace(/\/api\/?$/, '');
+    const normalizedPath = image.startsWith('/') ? image : `/${image}`;
+    return `${backendUrl}${normalizedPath}`;
   };
 
   useEffect(() => {
@@ -49,13 +53,15 @@ const NewsDetailPage: React.FC = () => {
           setNews(null);
           return;
         }
-        const data: INewsApi = await fetchNewsById(newsId);
+        const response = await fetch(`/api/news/${newsId}`);
+        const data = await response.json();
         setNews(data);
 
         // Fetch related articles
         if (data?.category) {
-          const relatedResult: IPaginatedNews = await fetchNews(data.category, 'published', 1, 4);
-          setRelatedNews(relatedResult?.news?.filter((n: INews) => n._id !== newsId) || []);
+          const relatedResponse = await fetch(`/api/news?category=${data.category}&status=published&limit=4`);
+          const relatedData = await relatedResponse.json();
+          setRelatedNews(relatedData?.news?.filter((n: INews) => n._id !== newsId) || []);
         }
       } catch (err) {
         console.error('Error loading news:', err);
@@ -278,7 +284,6 @@ const NewsDetailPage: React.FC = () => {
               src={getImageUrl(news.image)}
               alt={news.title}
               className="w-full h-auto rounded-lg"
-              loading="lazy"
             />
             <figcaption className="text-sm text-gray-500 mt-3 italic">
               {news.title}
@@ -295,7 +300,7 @@ const NewsDetailPage: React.FC = () => {
               lineHeight: '1.75',
               fontFamily: 'Georgia, serif'
             }}
-            dangerouslySetInnerHTML={{ __html: news.content }}
+            dangerouslySetInnerHTML={{ __html: (news.content ?? news.contentChunks?.join('') ?? '') }}
           />
         </div>
 
@@ -354,7 +359,6 @@ const NewsDetailPage: React.FC = () => {
                         src={getImageUrl(related.image)}
                         alt={related.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        loading="lazy"
                       />
                     </div>
                     <div className="p-5">

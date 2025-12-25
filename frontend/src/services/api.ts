@@ -41,7 +41,8 @@ export interface INews {
   slug: string;
   category: string;
   description: string;
-  content: string;
+  content?: string;
+  contentChunks?: string[];
   image?: string;
   author: string;
   createdAt: string;
@@ -81,21 +82,6 @@ export interface INews {
   tags?: string[];
   excerpt?: string;
 }
-
-const getAuthHeader = () => {
-  const authStorage = localStorage.getItem('auth-storage');
-  if (authStorage) {
-    try {
-      const { state } = JSON.parse(authStorage);
-      if (state?.token) {
-        return { Authorization: `Bearer ${state.token}` };
-      }
-    } catch (error) {
-      console.error('Error parsing auth storage:', error);
-    }
-  }
-  return {};
-};
 
 export const loginUser = async (data: IUserLogin) => {
   const response = await api.post('/users/login', data);

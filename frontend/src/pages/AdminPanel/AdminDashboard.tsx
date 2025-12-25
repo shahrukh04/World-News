@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { fetchAllNews, INews } from '../../services/api';
+import { fetchAllNews, fetchNewsById, deleteNews, INews } from '../../services/api';
 import NewsForm from '../../components/AdminPanel/NewsForm';
 import Button from '../../components/common/Button';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import { getImageUrlWithFallback } from '../../utils/imageUtils';
 import {
   FileText,
   Globe,
@@ -27,6 +29,8 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [editingArticle, setEditingArticle] = useState<INews | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editingLoading, setEditingLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   
   // Stats state
   const [stats, setStats] = useState({
@@ -45,7 +49,7 @@ const AdminDashboard = () => {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      const articles = await fetchAllNews();
+      const articles = await fetchAllNews(undefined, 'all');
       
       // Get recent articles (last 10)
       const recent = articles.slice(0, 10);
@@ -74,10 +78,20 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleEditArticle = (article: INews) => {
+  const handleEditArticle = async (article: INews) => {
+    setEditingLoading(true);
     setEditingArticle(article);
     setShowForm(true);
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    try {
+      const full = await fetchNewsById(article._id);
+      const fullContent = full.content || full.contentChunks?.join('') || '';
+      setEditingArticle({ ...full, content: fullContent });
+    } catch (error) {
+      console.error('Error loading article for edit:', error);
+    } finally {
+      setEditingLoading(false);
+    }
   };
 
   const handleNewArticle = () => {
@@ -96,6 +110,23 @@ const AdminDashboard = () => {
   const handleCancelEdit = () => {
     setEditingArticle(null);
     setShowForm(false);
+  };
+
+  const handleDeleteArticle = async (articleId: string) => {
+    if (!confirm('Are you sure you want to delete this article?')) return;
+    try {
+      setDeletingId(articleId);
+      await deleteNews(articleId);
+      await loadDashboardData();
+      if (editingArticle?._id === articleId) {
+        setEditingArticle(null);
+        setShowForm(false);
+      }
+    } catch (error) {
+      console.error('Error deleting article:', error);
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const StatCard = ({ title, value, icon: Icon, color, change }: any) => (
@@ -218,19 +249,6 @@ const AdminDashboard = () => {
                   </span>
                 </Link>
               </Button>
-              <Button asChild className="w-full justify-start h-14 text-left font-medium bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/30 dark:hover:to-emerald-900/30 border border-green-200 dark:border-green-700 hover:border-green-300 dark:hover:border-green-600 transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
-                <Link to="/admin/scheduler">
-                  <span className="flex items-center">
-                    <div className="p-2 bg-green-100 dark:bg-green-900/40 rounded-lg mr-4">
-                      <Calendar className="h-5 w-5 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <div className="text-gray-900 dark:text-white font-semibold">News Scheduler</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Schedule articles for future publishing</div>
-                    </div>
-                  </span>
-                </Link>
-              </Button>
               <Button asChild className="w-full justify-start h-14 text-left font-medium bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 hover:from-purple-100 hover:to-violet-100 dark:hover:from-purple-900/30 dark:hover:to-violet-900/30 border border-purple-200 dark:border-purple-700 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
                 <Link to="/admin/analytics">
                   <span className="flex items-center">
@@ -306,7 +324,7 @@ const AdminDashboard = () => {
                   <div key={article._id} className="flex items-center space-x-4 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors group">
                     {article.image && (
                       <img 
-                        src={article.image} 
+                        src={getImageUrlWithFallback(article.image, '/placeholder-image.svg')} 
                         alt={article.title}
                         className="h-12 w-16 object-cover rounded-md"
                       />
@@ -344,12 +362,8 @@ const AdminDashboard = () => {
                         variant="destructive"
                         size="sm"
                         className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                        onClick={() => {
-                          if (confirm('Are you sure you want to delete this article?')) {
-                            // Add delete functionality here
-                            console.log('Delete article:', article._id);
-                          }
-                        }}
+                        onClick={() => handleDeleteArticle(article._id)}
+                        disabled={deletingId === article._id}
                       >
                         <Trash2 className="h-3 w-3" />
                       </Button>
@@ -384,6 +398,12 @@ const AdminDashboard = () => {
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               {editingArticle ? 'Edit Article' : 'Add New Article'}
             </h2>
+            {editingLoading && (
+              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                <LoadingSpinner size="sm" />
+                <span>Loading article…</span>
+              </div>
+            )}
             <div className="flex items-center space-x-2">
               <Button
                 variant="secondary"

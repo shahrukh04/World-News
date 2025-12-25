@@ -1,12 +1,50 @@
 import mongoose from 'mongoose';
 import slugify from 'slugify';
+import zlib from 'zlib';
+
+const CONTENT_COMPRESSION = 'gzip';
+const CONTENT_CHUNK_BYTES = 32 * 1024;
+
+const compressContentToChunks = (content) => {
+  const input = Buffer.from(content || '', 'utf8');
+  const chunks = [];
+
+  for (let offset = 0; offset < input.length; offset += CONTENT_CHUNK_BYTES) {
+    const slice = input.subarray(offset, offset + CONTENT_CHUNK_BYTES);
+    const compressed = zlib.gzipSync(slice, { level: zlib.constants.Z_BEST_COMPRESSION });
+    chunks.push({
+      index: chunks.length,
+      data: compressed,
+      originalSize: slice.length,
+      compressedSize: compressed.length,
+    });
+  }
+
+  return {
+    compression: CONTENT_COMPRESSION,
+    chunkSizeBytes: CONTENT_CHUNK_BYTES,
+    originalSizeBytes: input.length,
+    chunks,
+  };
+};
 
 const newsSchema = new mongoose.Schema({
   title: { type: String, required: true },
   slug: { type: String, unique: true },
   category: { type: String, required: true, enum: ['India', 'World', 'Health', 'Jobs', 'Sports', 'Technology', 'IPO', 'Business', 'Entertainment', 'Other'] },
   description: { type: String, required: true },
-  content: { type: String, required: true }, // Full article content
+  content: { type: String, required: false }, // transient input; persisted as compressed chunks
+  contentCompression: { type: String, enum: [CONTENT_COMPRESSION], default: CONTENT_COMPRESSION },
+  contentChunkSizeBytes: { type: Number, default: CONTENT_CHUNK_BYTES },
+  contentOriginalSizeBytes: { type: Number, default: 0 },
+  contentCompressedChunks: [
+    {
+      index: { type: Number, required: true },
+      data: { type: Buffer, required: true },
+      originalSize: { type: Number, required: true },
+      compressedSize: { type: Number, required: true },
+    },
+  ],
   image: { type: String },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   
@@ -45,8 +83,6 @@ const newsSchema = new mongoose.Schema({
   excerpt: { type: String, maxlength: 300 }
 }, { timestamps: true });
 
-newsSchema.index({ status: 1, category: 1, createdAt: -1 });
-
 // Auto-generate slug before saving
 newsSchema.pre('save', function(next) {
   if (this.isModified('title')) {
@@ -61,12 +97,21 @@ newsSchema.pre('save', function(next) {
   if (!this.metaDescription) {
     this.metaDescription = this.description.length > 160 ? this.description.substring(0, 157) + '...' : this.description;
   }
-  
-  // Calculate reading time and word count
-  if (this.content) {
-    const words = this.content.split(/\s+/).length;
+
+  if (this.isModified('content') && typeof this.content === 'string' && this.content.trim()) {
+    const rawContent = this.content;
+
+    const words = rawContent.split(/\s+/).filter(Boolean).length;
     this.wordCount = words;
-    this.readingTime = Math.ceil(words / 200); // Average reading speed
+    this.readingTime = Math.max(1, Math.ceil(words / 200));
+
+    const compressed = compressContentToChunks(rawContent);
+    this.contentCompression = compressed.compression;
+    this.contentChunkSizeBytes = compressed.chunkSizeBytes;
+    this.contentOriginalSizeBytes = compressed.originalSizeBytes;
+    this.contentCompressedChunks = compressed.chunks;
+
+    this.content = undefined;
   }
   
   // Set published date

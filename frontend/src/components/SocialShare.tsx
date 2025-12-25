@@ -6,7 +6,7 @@ interface SocialShareProps {
   description?: string;
 }
 
-const SocialShare: React.FC<SocialShareProps> = ({ title, url, description }) => {
+const SocialShare: React.FC<SocialShareProps> = ({ title, url }) => {
   const shareUrls = {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
     twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,

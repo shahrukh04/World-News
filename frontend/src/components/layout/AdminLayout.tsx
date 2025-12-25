@@ -16,7 +16,6 @@ import {
   X, 
   Bell,
   ChevronDown,
-  Clock
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/Button';
@@ -63,7 +62,6 @@ const AdminLayout = () => {
     { name: 'Categories', href: '/admin/categories', icon: FolderOpen, badge: '12' },
     { name: 'Tags', href: '/admin/tags', icon: Tag, badge: '45' },
     { name: 'Users', href: '/admin/users', icon: Users, badge: '2.5k' },
-    { name: 'News Scheduler', href: '/admin/scheduler', icon: Clock },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
     { name: 'SEO Tools', href: '/admin/seo', icon: Search },
     { name: 'Newsletter', href: '/admin/newsletter', icon: Mail, badge: '1.2k' },

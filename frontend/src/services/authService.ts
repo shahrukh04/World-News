@@ -1,5 +1,5 @@
 import api from '../api/api'; // Import the configured Axios instance
-import type { LoginCredentials, RegisterData, AuthResponse, ApiResponse, User } from '@/types';
+import type { LoginCredentials, AuthResponse, ApiResponse, User } from '@/types';
 
 type LoginApiResponse = {
   status: string;

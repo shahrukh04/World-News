@@ -10,6 +10,14 @@ interface User {
   createdAt: string;
 }
 
+type ErrorWithResponseMessage = {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+};
+
 const UserManagement = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -34,8 +42,12 @@ const UserManagement = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(response.data);
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to fetch users');
+      } catch (err) {
+        const errorLike = err as ErrorWithResponseMessage;
+        const message =
+          errorLike.response?.data?.message ||
+          (err instanceof Error ? err.message : 'Failed to fetch users');
+        setError(message);
         console.error('Error fetching users:', err);
       } finally {
         setLoading(false);

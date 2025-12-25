@@ -1,5 +1,8 @@
 import News from '../models/newsModel.js';
+import zlib from 'zlib';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+import User from '../models/userModel.js';
 
 // Helper: trigger a rebuild/deploy webhook (non-blocking)
 const triggerRebuildWebhook = async () => {
@@ -11,6 +14,73 @@ const triggerRebuildWebhook = async () => {
   } catch (e) {
     console.warn('Error triggering rebuild webhook:', e.message || e);
   }
+};
+
+const parseJsonArrayField = (value) => {
+  if (value === undefined || value === null || value === '') return undefined;
+  if (Array.isArray(value)) return value;
+  if (typeof value !== 'string') return undefined;
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const parseBooleanField = (value) => {
+  if (value === undefined || value === null || value === '') return undefined;
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value !== 0;
+  if (typeof value !== 'string') return undefined;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'true') return true;
+  if (normalized === 'false') return false;
+  return undefined;
+};
+
+const getAuthUserFromRequest = async (req) => {
+  const authHeader = req.headers?.authorization;
+  if (!authHeader || typeof authHeader !== 'string') return null;
+  if (!authHeader.startsWith('Bearer ')) return null;
+  const token = authHeader.split(' ')[1];
+  if (!token) return null;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select('-password');
+    return user || null;
+  } catch {
+    return null;
+  }
+};
+
+const decompressNewsContentChunks = (newsDoc) => {
+  const compression = newsDoc?.contentCompression;
+  const chunks = newsDoc?.contentCompressedChunks || [];
+  if (!Array.isArray(chunks) || chunks.length === 0) return [];
+
+  const sorted = [...chunks].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+
+  if (compression !== 'gzip') return [];
+
+  return sorted.map((chunk) => zlib.gunzipSync(chunk.data).toString('utf8'));
+};
+
+const getNewsContentChunksForResponse = (newsDoc) => {
+  const decompressedChunks = decompressNewsContentChunks(newsDoc);
+  if (decompressedChunks.length > 0) return decompressedChunks;
+  if (typeof newsDoc?.content === 'string' && newsDoc.content.trim()) return [newsDoc.content];
+  return [];
+};
+
+const toSafeNewsResponse = (newsDoc) => {
+  const obj = newsDoc?.toObject ? newsDoc.toObject() : { ...newsDoc };
+  obj.contentChunks = getNewsContentChunksForResponse(newsDoc);
+  delete obj.contentCompressedChunks;
+  delete obj.contentCompression;
+  delete obj.contentChunkSizeBytes;
+  delete obj.contentOriginalSizeBytes;
+  return obj;
 };
 
 // Create news (admin only)
@@ -46,6 +116,11 @@ export const createNews = async (req, res) => {
       });
     }
 
+    const keywordsArray = parseJsonArrayField(keywords) ?? [];
+    const tagsArray = parseJsonArrayField(tags) ?? [];
+    const featuredBool = parseBooleanField(featured) ?? false;
+    const trendingBool = parseBooleanField(trending) ?? false;
+
     const news = new News({
       title,
       category,
@@ -57,7 +132,7 @@ export const createNews = async (req, res) => {
       // SEO Fields
       metaTitle,
       metaDescription,
-      keywords: keywords || [],
+      keywords: keywordsArray,
       focusKeyword,
       canonicalUrl,
       ogTitle,
@@ -65,16 +140,16 @@ export const createNews = async (req, res) => {
       twitterTitle,
       twitterDescription,
       // Content fields
-      tags: tags || [],
+      tags: tagsArray,
       status: status || 'draft',
-      featured: featured || false,
-      trending: trending || false
+      featured: featuredBool,
+      trending: trendingBool
     });
 
-  const createdNews = await news.save();
-  // trigger rebuild webhook (non-blocking)
-  triggerRebuildWebhook();
-  res.status(201).json(createdNews);
+    const createdNews = await news.save();
+    // trigger rebuild webhook (non-blocking)
+    triggerRebuildWebhook();
+    res.status(201).json(toSafeNewsResponse(createdNews));
   } catch (error) {
     console.error('Error creating news:', error);
     res.status(400).json({ 
@@ -96,7 +171,18 @@ export const getNews = async (req, res) => {
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
     
-    let filter = { status };
+    const requestedStatus = typeof status === 'string' ? status : 'published';
+    if (requestedStatus !== 'published') {
+      const user = await getAuthUserFromRequest(req);
+      if (!user) {
+        return res.status(401).json({ message: 'Not authorized' });
+      }
+    }
+
+    const filter = {};
+    if (requestedStatus !== 'all') {
+      filter.status = requestedStatus;
+    }
     if (category && category !== 'all') {
       filter.category = category;
     }
@@ -136,16 +222,14 @@ export const getNews = async (req, res) => {
 // Get news by id
 export const getNewsById = async (req, res) => {
   try {
-    const idOrSlug = req.params.id;
-    let news;
-    if (mongoose.Types.ObjectId.isValid(idOrSlug)) {
-      news = await News.findById(idOrSlug);
-    } else {
-      news = await News.findOne({ slug: idOrSlug });
-    }
+    const identifier = req.params.id;
+    const isObjectId = mongoose.Types.ObjectId.isValid(identifier);
+    const news = isObjectId
+      ? await News.findById(identifier)
+      : await News.findOne({ slug: identifier });
 
     if (news) {
-      res.json(news);
+      res.json(toSafeNewsResponse(news));
     } else {
       res.status(404).json({ message: 'News not found' });
     }
@@ -210,17 +294,24 @@ export const updateNews = async (req, res) => {
       return res.status(404).json({ message: 'News not found' });
     }
 
+    const keywordsArray = parseJsonArrayField(keywords);
+    const tagsArray = parseJsonArrayField(tags);
+    const featuredBool = parseBooleanField(featured);
+    const trendingBool = parseBooleanField(trending);
+
     // Update fields
     news.title = title || news.title;
     news.category = category || news.category;
     news.description = description || news.description;
-    news.content = content || news.content;
+    if (content !== undefined) {
+      news.content = content;
+    }
     news.excerpt = excerpt || news.excerpt;
     
     // Update SEO fields
     news.metaTitle = metaTitle || news.metaTitle;
     news.metaDescription = metaDescription || news.metaDescription;
-    news.keywords = keywords || news.keywords;
+    if (keywordsArray) news.keywords = keywordsArray;
     news.focusKeyword = focusKeyword || news.focusKeyword;
     news.canonicalUrl = canonicalUrl || news.canonicalUrl;
     news.ogTitle = ogTitle || news.ogTitle;
@@ -229,20 +320,20 @@ export const updateNews = async (req, res) => {
     news.twitterDescription = twitterDescription || news.twitterDescription;
     
     // Update content fields
-    news.tags = tags || news.tags;
+    if (tagsArray) news.tags = tagsArray;
     news.status = status || news.status;
-    news.featured = featured !== undefined ? featured : news.featured;
-    news.trending = trending !== undefined ? trending : news.trending;
+    if (featuredBool !== undefined) news.featured = featuredBool;
+    if (trendingBool !== undefined) news.trending = trendingBool;
     
     // Update image if provided
     if (req.file) {
       news.image = req.file.filename;
     }
 
-  const updatedNews = await news.save();
-  // trigger rebuild webhook (non-blocking)
-  triggerRebuildWebhook();
-  res.json(updatedNews);
+    const updatedNews = await news.save();
+    // trigger rebuild webhook (non-blocking)
+    triggerRebuildWebhook();
+    res.json(toSafeNewsResponse(updatedNews));
   } catch (error) {
     console.error('Error updating news:', error);
     res.status(400).json({ 

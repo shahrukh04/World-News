@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Clock, TrendingUp, Filter, Grid, List, ChevronRight } from 'lucide-react';
-import { getImageUrl } from '../utils/imageUtils';
+import { Clock, TrendingUp, Grid, List, ChevronRight } from 'lucide-react';
 
 // API Types
 interface INews {
@@ -9,7 +8,8 @@ interface INews {
   slug: string;
   category: string;
   description: string;
-  content: string;
+  content?: string;
+  contentChunks?: string[];
   image?: string;
   author: string;
   createdAt: string;
@@ -32,8 +32,14 @@ const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category })
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'latest' | 'popular'>('latest');
 
-  const getImageWithFallback = (image?: string) => {
-    return getImageUrl(image) || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
+  // Get image URL helper
+  const getImageUrl = (image?: string) => {
+    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
+    if (image.startsWith('http')) return image;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const backendUrl = apiUrl.replace(/\/api\/?$/, '');
+    const normalizedPath = image.startsWith('/') ? image : `/${image}`;
+    return `${backendUrl}${normalizedPath}`;
   };
 
   useEffect(() => {
@@ -41,7 +47,7 @@ const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category })
       setLoading(true);
       try {
         // Replace with your actual API endpoint
-        const response = await fetch(`/api/news?category=${category}&status=published&limit=24`);
+        const response = await fetch(`/api/news?category=${category}&status=published&limit=50`);
         const data = await response.json();
         let articles = data?.news || [];
 
@@ -76,20 +82,6 @@ const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category })
     if (diffMins < 60) return `${diffMins} mins ago`;
     if (diffHours < 24) return `${diffHours} hours ago`;
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  };
-
-  // Get category color
-  const getCategoryColor = (cat: string) => {
-    const colors: Record<string, string> = {
-      'World': 'bg-red-600',
-      'Business': 'bg-blue-600',
-      'Technology': 'bg-purple-600',
-      'Sport': 'bg-yellow-600',
-      'Health': 'bg-green-600',
-      'Entertainment': 'bg-pink-600',
-      'Politics': 'bg-indigo-600',
-    };
-    return colors[cat] || 'bg-gray-600';
   };
 
   // Get category description
