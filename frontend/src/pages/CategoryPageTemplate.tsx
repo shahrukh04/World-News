@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Clock, TrendingUp, Grid, List, ChevronRight } from 'lucide-react';
+import { getImageUrlWithFallback } from '@/utils/imageUtils';
 
 // API Types
 interface INews {
@@ -32,15 +33,7 @@ const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category })
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'latest' | 'popular'>('latest');
 
-  // Get image URL helper
-  const getImageUrl = (image?: string) => {
-    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
-    if (image.startsWith('http')) return image;
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    const backendUrl = apiUrl.replace(/\/api\/?$/, '');
-    const normalizedPath = image.startsWith('/') ? image : `/${image}`;
-    return `${backendUrl}${normalizedPath}`;
-  };
+  const fallbackCategory = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
 
   useEffect(() => {
     const loadNews = async () => {
@@ -213,7 +206,7 @@ const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category })
             <article className="group cursor-pointer">
               <div className="relative overflow-hidden bg-black mb-4">
                 <img
-                  src={getImageUrl(featuredArticle.image)}
+                  src={getImageUrlWithFallback(featuredArticle.image, fallbackCategory)}
                   alt={featuredArticle.title}
                   className="w-full h-[450px] object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -247,7 +240,7 @@ const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category })
                 <div className="flex gap-4">
                   <div className="w-32 h-24 flex-shrink-0 overflow-hidden bg-gray-100">
                     <img
-                      src={getImageUrl(news.image)}
+                      src={getImageUrlWithFallback(news.image, fallbackCategory)}
                       alt={news.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
@@ -271,7 +264,7 @@ const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category })
               <article key={news._id} className="group cursor-pointer">
                 <div className="relative overflow-hidden bg-gray-100 mb-3">
                   <img
-                    src={getImageUrl(news.image)}
+                    src={getImageUrlWithFallback(news.image, fallbackCategory)}
                     alt={news.title}
                     className="w-full h-52 object-cover group-hover:scale-105 transition-transform"
                   />
@@ -308,7 +301,7 @@ const CategoryPageTemplate: React.FC<CategoryPageTemplateProps> = ({ category })
               <article key={news._id} className="group cursor-pointer flex gap-6 pb-6 border-b border-gray-200">
                 <div className="w-72 h-48 flex-shrink-0 overflow-hidden bg-gray-100">
                   <img
-                    src={getImageUrl(news.image)}
+                    src={getImageUrlWithFallback(news.image, fallbackCategory)}
                     alt={news.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />

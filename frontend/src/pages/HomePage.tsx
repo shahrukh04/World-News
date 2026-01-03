@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AlertCircle, Globe } from 'lucide-react';
+import { getImageUrlWithFallback } from '@/utils/imageUtils';
 
 // API Types
 interface INews {
@@ -27,15 +28,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Get image URL helper
-  const getImageUrl = (image?: string) => {
-    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
-    if (image.startsWith('http')) return image;
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    const backendUrl = apiUrl.replace(/\/api\/?$/, '');
-    const normalizedPath = image.startsWith('/') ? image : `/${image}`;
-    return `${backendUrl}${normalizedPath}`;
-  };
+  const fallbackCard = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80';
 
   useEffect(() => {
     const loadNews = async () => {
@@ -174,7 +167,7 @@ const Home = () => {
             <a href={`/news/${heroArticle.slug || heroArticle._id}`} className="block group">
               <div className="relative overflow-hidden bg-black mb-4">
                 <img
-                  src={getImageUrl(heroArticle.image)}
+                  src={getImageUrlWithFallback(heroArticle.image, fallbackCard)}
                   alt={heroArticle.title}
                   className="w-full h-[400px] object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -213,7 +206,7 @@ const Home = () => {
                 <div className="flex gap-4">
                   <div className="w-32 h-24 flex-shrink-0 overflow-hidden bg-gray-100">
                     <img
-                      src={getImageUrl(news.image)}
+                      src={getImageUrlWithFallback(news.image, fallbackCard)}
                       alt={news.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />

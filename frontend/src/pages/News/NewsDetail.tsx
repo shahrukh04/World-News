@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Clock, Share2, Facebook, Twitter, Linkedin, Mail, Bookmark, Eye, ThumbsUp, ChevronRight, TrendingUp } from 'lucide-react';
+import { getImageUrlWithFallback } from '@/utils/imageUtils';
 
 // API Types
 interface INews {
@@ -34,15 +35,7 @@ const NewsDetailPage: React.FC = () => {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  // Get image URL helper
-  const getImageUrl = (image?: string) => {
-    if (!image) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80';
-    if (image.startsWith('http')) return image;
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    const backendUrl = apiUrl.replace(/\/api\/?$/, '');
-    const normalizedPath = image.startsWith('/') ? image : `/${image}`;
-    return `${backendUrl}${normalizedPath}`;
-  };
+  const fallbackHero = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80';
 
   useEffect(() => {
     const loadNewsDetail = async () => {
@@ -281,7 +274,7 @@ const NewsDetailPage: React.FC = () => {
         {news.image && (
           <figure className="mb-8">
             <img
-              src={getImageUrl(news.image)}
+              src={getImageUrlWithFallback(news.image, fallbackHero)}
               alt={news.title}
               className="w-full h-auto rounded-lg"
             />
@@ -356,7 +349,7 @@ const NewsDetailPage: React.FC = () => {
                   <a href={`/news/${related._id}`} className="block">
                     <div className="relative overflow-hidden bg-gray-100 h-48">
                       <img
-                        src={getImageUrl(related.image)}
+                        src={getImageUrlWithFallback(related.image, fallbackHero)}
                         alt={related.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                       />

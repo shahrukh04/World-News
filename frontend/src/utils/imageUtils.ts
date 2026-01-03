@@ -1,7 +1,7 @@
 // Utility functions for handling image URLs
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const SERVER_BASE_URL = API_BASE_URL.replace('/api', '');
+const SERVER_BASE_URL = API_BASE_URL.replace(/\/api\/?$/, '');
 
 /**
  * Get the full image URL for display
@@ -17,7 +17,11 @@ export const getImageUrl = (imagePath: string | undefined): string | undefined =
     return imagePath;
   }
   
-  // For local uploads, construct the full URL
+  // If path already points to uploads, prefix server base
+  if (imagePath.startsWith('/uploads/')) {
+    return `${SERVER_BASE_URL}${imagePath}`;
+  }
+  // For bare filenames, construct the full uploads URL
   return `${SERVER_BASE_URL}/uploads/${imagePath}`;
 };
 

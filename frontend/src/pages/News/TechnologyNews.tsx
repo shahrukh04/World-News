@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchNews, INews, IPaginatedNews } from '../../services/api';
 import { Zap, AlertCircle, Clock, Globe } from 'lucide-react';
+import { getImageUrlWithFallback } from '@/utils/imageUtils';
 
 const TechnologyNews = () => {
   const [newsList, setNewsList] = useState<INews[]>([]);
@@ -47,15 +48,7 @@ const TechnologyNews = () => {
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   };
 
-  // Get image with fallback
-  const getImageUrl = (image?: string) => {
-    if (!image) return 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80';
-    if (image.startsWith('http')) return image;
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    const backendUrl = apiUrl.replace(/\/api\/?$/, '');
-    const normalizedPath = image.startsWith('/') ? image : `/${image}`;
-    return `${backendUrl}${normalizedPath}`;
-  };
+  const fallbackTech = 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80';
 
   if (loading) {
     return (
@@ -132,7 +125,7 @@ const TechnologyNews = () => {
             <a href={`/news/${heroArticle.slug || heroArticle._id}`} className="block group">
               <div className="relative overflow-hidden bg-black mb-4">
                 <img
-                  src={getImageUrl(heroArticle.image)}
+                  src={getImageUrlWithFallback(heroArticle.image, fallbackTech)}
                   alt={heroArticle.title}
                   className="w-full h-[400px] object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -171,7 +164,7 @@ const TechnologyNews = () => {
                 <div className="flex gap-4">
                   <div className="w-32 h-24 flex-shrink-0 overflow-hidden bg-gray-100">
                     <img
-                      src={getImageUrl(news.image)}
+                      src={getImageUrlWithFallback(news.image, fallbackTech)}
                       alt={news.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
@@ -194,7 +187,7 @@ const TechnologyNews = () => {
             <a key={news._id} href={`/news/${news.slug || news._id}`} className="block group">
               <div className="relative overflow-hidden bg-gray-100 mb-3">
                 <img
-                  src={getImageUrl(news.image)}
+                  src={getImageUrlWithFallback(news.image, fallbackTech)}
                   alt={news.title}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform"
                 />
@@ -227,7 +220,7 @@ const TechnologyNews = () => {
                   <article className="flex gap-4 pb-6 border-b border-gray-200 last:border-0">
                   <div className="w-28 h-20 flex-shrink-0 overflow-hidden bg-gray-100">
                     <img
-                      src={getImageUrl(news.image)}
+                      src={getImageUrlWithFallback(news.image, fallbackTech)}
                       alt={news.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
