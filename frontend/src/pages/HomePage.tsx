@@ -85,10 +85,44 @@ const Home = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <div className="max-w-[1280px] mx-auto px-4 py-20">
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-red-600"></div>
-            <p className="text-xl font-medium text-gray-700">Loading latest news...</p>
+        {/* Breaking News Skeleton */}
+        <div className="bg-red-600 text-white h-10 flex items-center px-4">
+           <div className="max-w-[1280px] mx-auto w-full flex items-center gap-3">
+             <div className="h-5 w-20 bg-red-700 animate-pulse rounded"></div>
+             <div className="h-5 flex-1 bg-red-500 animate-pulse rounded opacity-50"></div>
+           </div>
+        </div>
+
+        <div className="max-w-[1280px] mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border-b border-gray-200 py-6">
+            {/* Hero Article Skeleton */}
+            <div className="lg:col-span-2 lg:border-r border-gray-200 lg:pr-6">
+              <div className="w-full h-[400px] bg-gray-200 animate-pulse mb-4 rounded-sm"></div>
+              <div className="space-y-4">
+                <div className="h-6 w-24 bg-gray-200 animate-pulse rounded"></div>
+                <div className="h-10 w-3/4 bg-gray-200 animate-pulse rounded"></div>
+                <div className="space-y-2">
+                  <div className="h-4 w-full bg-gray-200 animate-pulse rounded"></div>
+                  <div className="h-4 w-5/6 bg-gray-200 animate-pulse rounded"></div>
+                  <div className="h-4 w-4/6 bg-gray-200 animate-pulse rounded"></div>
+                </div>
+                <div className="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
+              </div>
+            </div>
+
+            {/* Featured Articles Skeleton */}
+            <div className="lg:pl-6 space-y-6 mt-6 lg:mt-0">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-4 pb-6 border-b border-gray-200 last:border-0">
+                  <div className="w-32 h-24 flex-shrink-0 bg-gray-200 animate-pulse rounded-sm"></div>
+                  <div className="flex-1 space-y-3">
+                    <div className="h-3 w-16 bg-gray-200 animate-pulse rounded"></div>
+                    <div className="h-4 w-full bg-gray-200 animate-pulse rounded"></div>
+                    <div className="h-4 w-2/3 bg-gray-200 animate-pulse rounded"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

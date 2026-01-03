@@ -106,7 +106,7 @@ export const createNews = async (req, res) => {
     trending
   } = req.body;
   
-  const image = req.file ? req.file.filename : null;
+  const image = req.file ? `/uploads/${req.file.filename}` : null;
 
   try {
     // Validate required fields
@@ -327,7 +327,7 @@ export const updateNews = async (req, res) => {
     
     // Update image if provided
     if (req.file) {
-      news.image = req.file.filename;
+      news.image = `/uploads/${req.file.filename}`;
     }
 
     const updatedNews = await news.save();

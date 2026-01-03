@@ -93,179 +93,164 @@ function List<T>({ items, renderItem }: ListProps<T>) {
 
 const PostPage = () => {
   const { slug } = useParams<{ slug: string }>()
-  const [post, setPost] = useState<Post | null>(null)
-  const [relatedPosts, setRelatedPosts] = useState<Post[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
+  // Define mock data synchronously so it's available on first render
+  const mockPost: Post = {
+    _id: '1',
+    title: 'Getting Started with React and TypeScript: A Comprehensive Guide',
+    slug: slug || 'getting-started-react-typescript',
+    excerpt: 'Learn how to build modern web applications with React and TypeScript. This comprehensive guide covers everything you need to know from setup to deployment.',
+    content: mockContent,
+    author: {
+      _id: '1',
+      username: 'john_doe',
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john@example.com',
+      role: 'admin',
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+    },
+    category: {
+      _id: '1',
+      name: 'Web Development',
+      slug: 'web-development',
+      description: 'Articles about modern web development',
+      displaySettings: {
+        color: '#3B82F6',
+        icon: '💻'
+      },
+      seo: {
+        metaTitle: 'Web Development Articles',
+        metaDescription: 'Latest web development tutorials and guides'
+      },
+      analytics: {
+        totalPosts: 25,
+        totalViews: 15000,
+        averageReadTime: 8
+      },
+      isActive: true,
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z'
+    },
+    tags: [],
+    status: 'published',
+    publishedAt: '2024-01-15T10:00:00Z',
+    featuredImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop',
+    seo: {
+      metaTitle: 'Getting Started with React and TypeScript: A Comprehensive Guide',
+      metaDescription: 'Learn how to build modern web applications with React and TypeScript. This comprehensive guide covers everything you need to know from setup to deployment.',
+      canonicalUrl: `/post/${slug}`,
+      focusKeyword: 'React TypeScript',
+    },
+    analytics: {
+      views: 1250,
+      likes: 156,
+      shares: 120,
+      comments: 23,
+      readTime: 6,
+    },
+    settings: {
+      allowComments: true,
+      isPinned: false,
+      isFeatured: false,
+      adSenseEnabled: true,
+      affiliateEnabled: false,
+    },
+    createdAt: '2024-01-15T10:00:00Z',
+    updatedAt: '2024-01-15T10:00:00Z',
+  }
+
+  const mockRelatedPosts: Post[] = [
+    {
+      _id: '2',
+      title: 'Advanced TypeScript Patterns for React Developers',
+      slug: 'advanced-typescript-patterns-react',
+      excerpt: 'Explore advanced TypeScript patterns that will make your React code more robust and maintainable.',
+      content: 'Lorem ipsum dolor sit amet...',
+      author: mockPost.author,
+      category: {
+        _id: '2',
+        name: 'TypeScript',
+        slug: 'typescript',
+        description: 'TypeScript tutorials and best practices',
+        displaySettings: {
+          color: '#007ACC',
+          icon: '📘'
+        },
+        seo: {
+          metaTitle: 'TypeScript Articles',
+          metaDescription: 'Learn TypeScript with our comprehensive guides'
+        },
+        analytics: {
+          totalPosts: 18,
+          totalViews: 12000,
+          averageReadTime: 7
+        },
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z'
+      },
+      tags: [],
+      status: 'published',
+      publishedAt: '2024-01-20T14:30:00Z',
+      featuredImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop',
+      seo: { metaTitle: '', metaDescription: '', canonicalUrl: '', focusKeyword: '' },
+      analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 0 },
+      settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
+      createdAt: '2024-01-20T14:30:00Z',
+      updatedAt: '2024-01-20T14:30:00Z',
+    },
+    {
+      _id: '3',
+      title: 'Building Scalable React Applications with TypeScript',
+      slug: 'building-scalable-react-applications-typescript',
+      excerpt: 'Learn how to structure and scale your React applications using TypeScript best practices.',
+      content: 'Lorem ipsum dolor sit amet...',
+      author: mockPost.author,
+      category: {
+        _id: '3',
+        name: 'React',
+        slug: 'react',
+        description: 'React development guides and tutorials',
+        displaySettings: {
+          color: '#61DAFB',
+          icon: '⚛️'
+        },
+        seo: {
+          metaTitle: 'React Articles',
+          metaDescription: 'Master React with our detailed tutorials'
+        },
+        analytics: {
+          totalPosts: 32,
+          totalViews: 20000,
+          averageReadTime: 9
+        },
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z'
+      },
+      tags: [],
+      status: 'published',
+      publishedAt: '2024-01-25T09:15:00Z',
+      featuredImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop',
+      seo: { metaTitle: '', metaDescription: '', canonicalUrl: '', focusKeyword: '' },
+      analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 0 },
+      settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
+      createdAt: '2024-01-25T09:15:00Z',
+      updatedAt: '2024-01-25T09:15:00Z',
+    },
+  ]
+
+  const [post, setPost] = useState<Post | null>(mockPost)
+  const [relatedPosts] = useState<Post[]>(mockRelatedPosts)
+  const isLoading = false
+  const error: string | null = null
+
+  // Update mock data when slug changes (optional, but good for navigation)
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        setIsLoading(true)
-        // Mock data for now - replace with actual API call
-        const mockPost: Post = {
-          _id: '1',
-          title: 'Getting Started with React and TypeScript: A Comprehensive Guide',
-          slug: slug || 'getting-started-react-typescript',
-          excerpt: 'Learn how to build modern web applications with React and TypeScript. This comprehensive guide covers everything you need to know from setup to deployment.',
-          content: mockContent,
-          author: {
-            _id: '1',
-            username: 'john_doe',
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john@example.com',
-            role: 'admin',
-
-            createdAt: '2024-01-01T00:00:00Z',
-            updatedAt: '2024-01-01T00:00:00Z',
-          },
-          category: {
-            _id: '1',
-            name: 'Web Development',
-            slug: 'web-development',
-            description: 'Articles about modern web development',
-            displaySettings: {
-              color: '#3B82F6',
-              icon: '💻'
-            },
-            seo: {
-              metaTitle: 'Web Development Articles',
-              metaDescription: 'Latest web development tutorials and guides'
-            },
-            analytics: {
-              totalPosts: 25,
-              totalViews: 15000,
-              averageReadTime: 8
-            },
-            isActive: true,
-            createdAt: '2024-01-01T00:00:00Z',
-            updatedAt: '2024-01-01T00:00:00Z'
-          },
-          tags: [],
-          status: 'published',
-          publishedAt: '2024-01-15T10:00:00Z',
-          featuredImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop',
-          seo: {
-            metaTitle: 'Getting Started with React and TypeScript: A Comprehensive Guide',
-            metaDescription: 'Learn how to build modern web applications with React and TypeScript. This comprehensive guide covers everything you need to know from setup to deployment.',
-            canonicalUrl: `/post/${slug}`,
-            focusKeyword: 'React TypeScript',
-          },
-          analytics: {
-            views: 1250,
-            likes: 156,
-            shares: 120,
-            comments: 23,
-            readTime: 6,
-          },
-          settings: {
-            allowComments: true,
-            isPinned: false,
-            isFeatured: false,
-            adSenseEnabled: true,
-            affiliateEnabled: false,
-          },
-          createdAt: '2024-01-15T10:00:00Z',
-          updatedAt: '2024-01-15T10:00:00Z',
-        }
-
-        const mockRelatedPosts: Post[] = [
-          {
-            _id: '2',
-            title: 'Advanced TypeScript Patterns for React Developers',
-            slug: 'advanced-typescript-patterns-react',
-            excerpt: 'Explore advanced TypeScript patterns that will make your React code more robust and maintainable.',
-            content: 'Lorem ipsum dolor sit amet...',
-            author: mockPost.author,
-            category: {
-              _id: '2',
-              name: 'TypeScript',
-              slug: 'typescript',
-              description: 'TypeScript tutorials and best practices',
-              displaySettings: {
-                color: '#007ACC',
-                icon: '📘'
-              },
-              seo: {
-                metaTitle: 'TypeScript Articles',
-                metaDescription: 'Learn TypeScript with our comprehensive guides'
-              },
-              analytics: {
-                totalPosts: 18,
-                totalViews: 12000,
-                averageReadTime: 7
-              },
-              isActive: true,
-              createdAt: '2024-01-01T00:00:00Z',
-              updatedAt: '2024-01-01T00:00:00Z'
-            },
-            tags: [],
-            status: 'published',
-            publishedAt: '2024-01-20T14:30:00Z',
-            featuredImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', canonicalUrl: '', focusKeyword: '' },
-            analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 0 },
-            settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
-            createdAt: '2024-01-20T14:30:00Z',
-            updatedAt: '2024-01-20T14:30:00Z',
-          },
-          {
-            _id: '3',
-            title: 'Building Scalable React Applications with TypeScript',
-            slug: 'building-scalable-react-applications-typescript',
-            excerpt: 'Learn how to structure and scale your React applications using TypeScript best practices.',
-            content: 'Lorem ipsum dolor sit amet...',
-            author: mockPost.author,
-            category: {
-              _id: '3',
-              name: 'React',
-              slug: 'react',
-              description: 'React development guides and tutorials',
-              displaySettings: {
-                color: '#61DAFB',
-                icon: '⚛️'
-              },
-              seo: {
-                metaTitle: 'React Articles',
-                metaDescription: 'Master React with our detailed tutorials'
-              },
-              analytics: {
-                totalPosts: 32,
-                totalViews: 20000,
-                averageReadTime: 9
-              },
-              isActive: true,
-              createdAt: '2024-01-01T00:00:00Z',
-              updatedAt: '2024-01-01T00:00:00Z'
-            },
-            tags: [],
-            status: 'published',
-            publishedAt: '2024-01-25T09:15:00Z',
-            featuredImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', canonicalUrl: '', focusKeyword: '' },
-            analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 0 },
-            settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
-            createdAt: '2024-01-25T09:15:00Z',
-            updatedAt: '2024-01-25T09:15:00Z',
-          },
-        ]
-
-        // Simulate API delay
-        setTimeout(() => {
-          setPost(mockPost)
-          setRelatedPosts(mockRelatedPosts)
-          setIsLoading(false)
-        }, 1000)
-      } catch (err) {
-        setError('Failed to load post')
-        setIsLoading(false)
-      }
-    }
-
-    if (slug) {
-      fetchPost()
-    }
+    setPost({ ...mockPost, slug: slug || mockPost.slug })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug])
 
   const handleShare = (platform: string) => {

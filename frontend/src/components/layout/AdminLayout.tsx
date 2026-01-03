@@ -58,6 +58,7 @@ const AdminLayout = () => {
   // Define navigation items
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Create Post', href: '/admin/posts/create', icon: FileText },
     { name: 'Posts', href: '/admin/posts', icon: FileText, badge: '156' },
     { name: 'Categories', href: '/admin/categories', icon: FolderOpen, badge: '12' },
     { name: 'Tags', href: '/admin/tags', icon: Tag, badge: '45' },

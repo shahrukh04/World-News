@@ -10,115 +10,100 @@ import type { Post, Category } from '@/types'
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>()
-  const [category, setCategory] = useState<Category | null>(null)
-  const [posts, setPosts] = useState<Post[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+
+  // Mock data - defined synchronously
+  const mockCategory: Category = {
+    _id: '1',
+    name: 'Web Development',
+    slug: slug || 'web-development',
+    description: 'Articles about modern web development, frameworks, and best practices.',
+    parentCategory: undefined,
+    subcategories: ['react', 'vue', 'angular'],
+    seo: {
+      metaTitle: 'Web Development Articles - Blog Platform',
+      metaDescription: 'Explore our collection of web development articles covering React, Vue, Angular, and modern development practices.',
+      focusKeyword: 'web development'
+    },
+    analytics: {
+      totalPosts: 25,
+      totalViews: 15000,
+      averageReadTime: 5
+    },
+    displaySettings: {
+      color: '#3B82F6',
+      icon: '💻',
+      featuredImage: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop'
+    },
+    isActive: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z'
+  }
+
+  const mockPosts: Post[] = [
+    {
+      _id: '1',
+      title: 'Getting Started with React and TypeScript',
+      slug: 'getting-started-react-typescript',
+      excerpt: 'Learn how to build modern web applications with React and TypeScript. This comprehensive guide covers everything you need to know.',
+      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
+      author: {
+        _id: '1',
+        username: 'john_doe',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        role: 'admin',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+      },
+      category: mockCategory,
+      tags: [],
+      status: 'published',
+      publishedAt: '2024-01-15T10:00:00Z',
+      featuredImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=200&fit=crop',
+      seo: { metaTitle: '', metaDescription: '', focusKeyword: '', canonicalUrl: '' },
+      analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 5 },
+      settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
+      createdAt: '2024-01-15T10:00:00Z',
+      updatedAt: '2024-01-15T10:00:00Z',
+    },
+    {
+      _id: '2',
+      title: 'Vue.js 3 Composition API: A Complete Guide',
+      slug: 'vue-js-3-composition-api-complete-guide',
+      excerpt: 'Master the Vue.js 3 Composition API with this comprehensive guide. Learn how to build scalable and maintainable Vue applications.',
+      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
+      author: {
+        _id: '1',
+        username: 'john_doe',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        role: 'admin',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+      },
+      category: mockCategory,
+      tags: [],
+      status: 'published',
+      publishedAt: '2024-01-20T14:30:00Z',
+      featuredImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop',
+      seo: { metaTitle: '', metaDescription: '', focusKeyword: '', canonicalUrl: '' },
+      analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 7 },
+      settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
+      createdAt: '2024-01-20T14:30:00Z',
+      updatedAt: '2024-01-20T14:30:00Z',
+    }
+  ]
+
+  const [category, setCategory] = useState<Category | null>(mockCategory)
+  const [posts] = useState<Post[]>(mockPosts)
+  const isLoading = false
+  const error: string | null = null
 
   useEffect(() => {
-    const fetchCategoryData = async () => {
-      try {
-        setIsLoading(true)
-        // Mock data - replace with actual API call
-        const mockCategory: Category = {
-          _id: '1',
-          name: 'Web Development',
-          slug: slug || 'web-development',
-          description: 'Articles about modern web development, frameworks, and best practices.',
-          parentCategory: undefined,
-          subcategories: ['react', 'vue', 'angular'],
-          seo: {
-            metaTitle: 'Web Development Articles - Blog Platform',
-            metaDescription: 'Explore our collection of web development articles covering React, Vue, Angular, and modern development practices.',
-            focusKeyword: 'web development'
-          },
-          analytics: {
-            totalPosts: 25,
-            totalViews: 15000,
-            averageReadTime: 5
-          },
-          displaySettings: {
-            color: '#3B82F6',
-            icon: '💻',
-            featuredImage: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop'
-          },
-          isActive: true,
-          createdAt: '2024-01-01T00:00:00Z',
-          updatedAt: '2024-01-01T00:00:00Z'
-        }
-
-        const mockPosts: Post[] = [
-          {
-            _id: '1',
-            title: 'Getting Started with React and TypeScript',
-            slug: 'getting-started-react-typescript',
-            excerpt: 'Learn how to build modern web applications with React and TypeScript. This comprehensive guide covers everything you need to know.',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-            author: {
-              _id: '1',
-              username: 'john_doe',
-              firstName: 'John',
-              lastName: 'Doe',
-              email: 'john@example.com',
-              role: 'admin',
-              createdAt: '2024-01-01T00:00:00Z',
-              updatedAt: '2024-01-01T00:00:00Z',
-            },
-            category: mockCategory,
-            tags: [],
-            status: 'published',
-            publishedAt: '2024-01-15T10:00:00Z',
-            featuredImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', focusKeyword: '', canonicalUrl: '' },
-            analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 5 },
-            settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
-            createdAt: '2024-01-15T10:00:00Z',
-            updatedAt: '2024-01-15T10:00:00Z',
-          },
-          {
-            _id: '2',
-            title: 'Vue.js 3 Composition API: A Complete Guide',
-            slug: 'vue-js-3-composition-api-complete-guide',
-            excerpt: 'Master the Vue.js 3 Composition API with this comprehensive guide. Learn how to build scalable and maintainable Vue applications.',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-            author: {
-              _id: '1',
-              username: 'john_doe',
-              firstName: 'John',
-              lastName: 'Doe',
-              email: 'john@example.com',
-              role: 'admin',
-              createdAt: '2024-01-01T00:00:00Z',
-              updatedAt: '2024-01-01T00:00:00Z',
-            },
-            category: mockCategory,
-            tags: [],
-            status: 'published',
-            publishedAt: '2024-01-20T14:30:00Z',
-            featuredImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop',
-            seo: { metaTitle: '', metaDescription: '', focusKeyword: '', canonicalUrl: '' },
-            analytics: { views: 0, likes: 0, shares: 0, comments: 0, readTime: 7 },
-            settings: { allowComments: true, isPinned: false, isFeatured: false, adSenseEnabled: true, affiliateEnabled: false },
-            createdAt: '2024-01-20T14:30:00Z',
-            updatedAt: '2024-01-20T14:30:00Z',
-          }
-        ]
-
-        // Simulate API delay
-        setTimeout(() => {
-          setCategory(mockCategory)
-          setPosts(mockPosts)
-          setIsLoading(false)
-        }, 1000)
-      } catch (err) {
-        setError('Failed to load category')
-        setIsLoading(false)
-      }
-    }
-
-    if (slug) {
-      fetchCategoryData()
-    }
+    setCategory({ ...mockCategory, slug: slug || mockCategory.slug })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug])
 
   if (isLoading) {

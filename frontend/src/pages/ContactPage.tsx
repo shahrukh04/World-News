@@ -23,14 +23,14 @@ const ContactPage = () => {
     }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitting(true)
+    // setIsSubmitting(true)
     setSubmitStatus('idle')
 
     try {
       // Mock API call - replace with actual contact form submission
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // await new Promise(resolve => setTimeout(resolve, 2000))
       
       // Simulate success
       setSubmitStatus('success')

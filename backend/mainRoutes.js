@@ -1,6 +1,7 @@
 import express from 'express';
 import userRoutes from './routes/userRoute.js';
 import newsRoutes from './routes/newsRoute.js';
+import tagRoutes from './routes/tagRoute.js';
 import sitemapRoutes from './routes/sitemapRoute.js';
 import mongoose from 'mongoose';
 
@@ -29,6 +30,7 @@ router.get('/api/health', (req, res) => {
 // Routes
 router.use('/api/users', userRoutes);
 router.use('/api/news', newsRoutes);
+router.use('/api/tags', tagRoutes);
 router.use('/', sitemapRoutes); // Add sitemap route
 
 export default router;

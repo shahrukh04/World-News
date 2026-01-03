@@ -14,6 +14,7 @@ import Register from './pages/auth/Register';
 import AdminDashboard from './pages/AdminPanel/AdminDashboard';
 import UserManagement from './pages/AdminPanel/UserManagement';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import AdminLayout from './components/layout/AdminLayout';
 import MainLayout from './components/layout/MainLayout';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -22,6 +23,8 @@ import TermsOfService from './pages/TermsOfService';
 import Disclaimer from './pages/Disclaimer';
 import CookiePolicy from './pages/CookiePolicy';
 import NotFound from './pages/NotFound';
+
+import CreatePostPage from './services/CreatePostPage';
 
 const App = () => {
   return (
@@ -48,22 +51,19 @@ const App = () => {
           {/* 404 Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Route>
+        
         <Route
           path="/admin"
           element={
             <ProtectedRoute>
-              <AdminDashboard />
+              <AdminLayout />
             </ProtectedRoute>
           }
-        />
-        <Route
-          path="/admin/users"
-          element={
-            <ProtectedRoute>
-              <UserManagement />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="posts/create" element={<CreatePostPage />} />
+        </Route>
 
       </Routes>
   );

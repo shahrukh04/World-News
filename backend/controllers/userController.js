@@ -19,7 +19,7 @@ export const getUsers = async (req, res) => {
 // Register admin (only allow max 5)
 export const registerUser = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, email } = req.body;
 
     const userCount = await User.countDocuments();
     if (userCount >= 5) {
@@ -31,11 +31,12 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const user = await User.create({ username, password });
+    const user = await User.create({ username, password, email });
     if (user) {
       res.status(201).json({
         _id: user._id,
         username: user.username,
+        email: user.email,
         token: generateToken(user._id),
       });
     } else {

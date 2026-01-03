@@ -80,7 +80,7 @@ const newsSchema = new mongoose.Schema({
   focusKeyword: { type: String },
   relatedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'News' }],
   tags: [{ type: String }],
-  excerpt: { type: String, maxlength: 300 }
+  excerpt: { type: String, maxlength: 3000 }
 }, { timestamps: true });
 
 // Auto-generate slug before saving

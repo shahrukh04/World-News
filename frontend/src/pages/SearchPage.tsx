@@ -21,10 +21,9 @@ const SearchPage = () => {
     sortBy: searchParams.get('sortBy') || 'relevance'
   })
 
-  const handleSearch = async (searchQuery: string = query) => {
+  const handleSearch = (searchQuery: string = query) => {
     if (!searchQuery.trim()) return
 
-    setIsLoading(true)
     try {
       // Mock search results - replace with actual API call
       const mockResults: SearchResults = {
@@ -178,10 +177,8 @@ const SearchPage = () => {
       }
 
       // Simulate API delay
-      setTimeout(() => {
-        setResults(mockResults)
-        setIsLoading(false)
-      }, 1000)
+      setResults(mockResults)
+      setIsLoading(false)
     } catch (error) {
       console.error('Search error:', error)
       setIsLoading(false)
